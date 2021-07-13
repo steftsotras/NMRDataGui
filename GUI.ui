@@ -1043,7 +1043,7 @@
        <string>Remove Material</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_RemoveBulk">
+     <widget class="QPushButton" name="pushButton_AddBulk">
       <property name="geometry">
        <rect>
         <x>750</x>
@@ -1056,7 +1056,7 @@
        <string>Add Bulk</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_AddBulk">
+     <widget class="QPushButton" name="pushButton_RemoveBulk">
       <property name="geometry">
        <rect>
         <x>930</x>
@@ -1100,7 +1100,7 @@
      <attribute name="title">
       <string>Comperison Plots</string>
      </attribute>
-     <widget class="QGroupBox" name="groupBox_T1_T2">
+     <widget class="QGroupBox" name="groupBox_comperisonPlots_T1_T2">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -1112,7 +1112,7 @@
       <property name="title">
        <string/>
       </property>
-      <widget class="QCheckBox" name="checkBox_T1">
+      <widget class="QCheckBox" name="checkBox_comperisonPlots_T1">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -1134,7 +1134,7 @@
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QCheckBox" name="checkBox_T2">
+      <widget class="QCheckBox" name="checkBox_comperisonPlots_T2">
        <property name="geometry">
         <rect>
          <x>20</x>
@@ -1150,7 +1150,7 @@
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QPlainTextEdit" name="plainTextEdit_T1PlotName">
+      <widget class="QPlainTextEdit" name="plainTextEdit_comperisonPlots_comperisonPlots_T1PlotName">
        <property name="geometry">
         <rect>
          <x>350</x>
@@ -1160,7 +1160,7 @@
         </rect>
        </property>
       </widget>
-      <widget class="QLabel" name="label_T1PlotName">
+      <widget class="QLabel" name="label_comperisonPlots_T1PlotName">
        <property name="geometry">
         <rect>
          <x>230</x>
@@ -1173,7 +1173,7 @@
         <string>T1 Plot name:</string>
        </property>
       </widget>
-      <widget class="Line" name="line_T1_T2">
+      <widget class="Line" name="line_comperisonPlots_T1_T2">
        <property name="geometry">
         <rect>
          <x>210</x>
@@ -1196,7 +1196,7 @@
         </rect>
        </property>
       </widget>
-      <widget class="QLabel" name="label_T2PlotName">
+      <widget class="QLabel" name="label_comperisonPlots_T2PlotName">
        <property name="geometry">
         <rect>
          <x>230</x>
@@ -1210,7 +1210,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_language_3">
+     <widget class="QGroupBox" name="groupBox_comperisonPlots_language">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -1233,7 +1233,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QLabel" name="label_language_3">
+        <widget class="QLabel" name="label_comperisonPlots_language">
          <property name="font">
           <font>
            <pointsize>12</pointsize>
@@ -1245,7 +1245,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox_language_german_3">
+        <widget class="QCheckBox" name="checkBox_comperisonPlots_language_german">
          <property name="text">
           <string>German</string>
          </property>
@@ -1264,7 +1264,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox_language_english_3">
+        <widget class="QCheckBox" name="checkBox_comperisonPlots_language_english">
          <property name="text">
           <string>English</string>
          </property>
@@ -1275,7 +1275,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QGroupBox" name="groupBox_calculationOfVolumeFraction">
+     <widget class="QGroupBox" name="groupBox_comperisonPlots_calculationOfVolumeFraction">
       <property name="geometry">
        <rect>
         <x>126</x>
@@ -1287,7 +1287,7 @@
       <property name="title">
        <string/>
       </property>
-      <widget class="QPlainTextEdit" name="plainTextEdit_T2_calculationOfVolumeFraction">
+      <widget class="QPlainTextEdit" name="plainTextEdit_comperisonPlots_T2_calculationOfVolumeFraction">
        <property name="geometry">
         <rect>
          <x>260</x>
@@ -1297,7 +1297,7 @@
         </rect>
        </property>
       </widget>
-      <widget class="QPlainTextEdit" name="plainTextEdit_T1_calculationOfVolumeFraction">
+      <widget class="QPlainTextEdit" name="plainTextEdit_comperisonPlots_T1_calculationOfVolumeFraction">
        <property name="geometry">
         <rect>
          <x>260</x>
@@ -1307,7 +1307,7 @@
         </rect>
        </property>
       </widget>
-      <widget class="QLabel" name="label_T1_calculationOfVolumeFraction">
+      <widget class="QLabel" name="label_T1_comperisonPlots_calculationOfVolumeFraction">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1320,7 +1320,7 @@
         <string>T1 calculation of Volume Fraction:</string>
        </property>
       </widget>
-      <widget class="QLabel" name="label_T2_calculationOfVolumeFraction">
+      <widget class="QLabel" name="label_T2_comperisonPlots_calculationOfVolumeFraction">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1334,7 +1334,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QGroupBox" name="groupBox_referenceMeasurementFiles">
+     <widget class="QGroupBox" name="groupBox_comperisonPlots_referenceMeasurementFiles">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -1352,7 +1352,7 @@
       <property name="title">
        <string>Reference Measurement Files</string>
       </property>
-      <widget class="QTableView" name="tableView_referenceMeasurementFiles">
+      <widget class="QTableView" name="tableView_comperisonPlots_referenceMeasurementFiles">
        <property name="geometry">
         <rect>
          <x>10</x>
@@ -1374,7 +1374,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QPushButton" name="pushButtonRemoveSelectedReferenceMeasrementFiles">
+     <widget class="QPushButton" name="pushButton_comperisonPlots_RemoveSelectedReferenceMeasrementFiles">
       <property name="geometry">
        <rect>
         <x>310</x>
@@ -1387,7 +1387,7 @@
        <string>Remove Selected Files</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_AddReferenceReferenceMesurementFiles">
+     <widget class="QPushButton" name="pushButton_comperisonPlots_AddReferenceReferenceMesurementFiles">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -1400,7 +1400,7 @@
        <string>Add Files</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_RemoveAllReferenceMesurementFiles">
+     <widget class="QPushButton" name="pushButton_comperisonPlots_RemoveAllReferenceMesurementFiles">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -1413,7 +1413,7 @@
        <string>Remove all Files</string>
       </property>
      </widget>
-     <widget class="QPlainTextEdit" name="plainTextEdit_removeSelectedFilesReferenceMeasrementFiles">
+     <widget class="QPlainTextEdit" name="plainTextEdit_comperisonPlots_RemoveSelectedFilesReferenceMeasrementFiles">
       <property name="geometry">
        <rect>
         <x>310</x>
@@ -1426,7 +1426,7 @@
        <string>Files to Remove, e.g.: 2,3,6</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_run_ComerisonPlots">
+     <widget class="QPushButton" name="pushButton_ComerisonPlots_run">
       <property name="geometry">
        <rect>
         <x>920</x>
@@ -1470,7 +1470,7 @@
        <string>Remove Material</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_surfaceAreaCalculation_AddBulk">
+     <widget class="QPushButton" name="pushButton_surfaceAreaCalculation_RemoveBulk">
       <property name="geometry">
        <rect>
         <x>930</x>
@@ -2125,7 +2125,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QPushButton" name="pushButton_surfaceAreaCalculation_RemoveBulk">
+     <widget class="QPushButton" name="pushButton_surfaceAreaCalculation_AddBulk">
       <property name="geometry">
        <rect>
         <x>750</x>
@@ -2506,7 +2506,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QPushButton" name="pushButton_surfaceAreaCalculation_RemoveSelectedMeasrementFiles_2">
+     <widget class="QPushButton" name="pushButton_surfaceAreaCalculation_RemoveReferenceMeasrementFile">
       <property name="geometry">
        <rect>
         <x>300</x>
@@ -2519,7 +2519,7 @@
        <string>Remove File</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_surfaceAreaCalculation_AddMesurementFiles_2">
+     <widget class="QPushButton" name="pushButton_surfaceAreaCalculation_AddReferenceMesurementFile">
       <property name="geometry">
        <rect>
         <x>10</x>
