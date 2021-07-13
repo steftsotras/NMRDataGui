@@ -1,3 +1,4 @@
+
 import sys
 from PyQt5 import QtWidgets
 from PyQt5 import QtCore, QtGui
@@ -9,58 +10,14 @@ import functools
 import json
 
 from MainWindow import Ui_MainWindow_NMR
+from GUI_Toolbox import TableModelData
+from GUI_Toolbox import NMRData
 from Driver_referenceMeasurement_createFile_importExcel import Driver_referenceMeasurement_createFile_importExcel
 
 
 
-class TableModelData():
-    
 
-    def __init__(self):
-        self.model = QtGui.QStandardItemModel(0,6)
-        self.model.setHorizontalHeaderLabels(('Sample Name','T1 Value','T2 Value','Liquid Mass','Particle Mass', 'Position'))
-        
-
-    def DelRows(self, selectedRowsDEL):
-        
-        selectedRowsDEL.sort(reverse = True)
-
-        for i in selectedRowsDEL:
-            if(i >= 1 or i <= self.model.rowCount()):
-                self.model.removeRow(i-1)
-            
-
-    def RemoveAllRows(self):
-        
-        for row in range(self.model.rowCount()):
-            self.model.removeRow(0)
-
-    def AddRows(self, num, group1, group2):
-        
-        i=0
-        
-        for row in range(self.model.rowCount(), self.model.rowCount() + num):
-        
-            self.model.insertRow(self.model.rowCount())
-            
-            #Data from excel
-            item = QtGui.QStandardItem(group1[i][1])
-            self.model.setItem(row, 0, item)
-            #item = QtGui.QStandardItem("{0:.2f}, {0:.2f}, {0:.2f}".format( group1[i][3], group1[i+1][3], group1[i+2][3] ) )
-            item = QtGui.QStandardItem('%.2f - %.2f - %.2f' % (group1[i][3], group1[i+1][3], group1[i+2][3]) ) 
-            self.model.setItem(row, 1, item)
-            item = QtGui.QStandardItem('%.2f -  %.2f - %.2f' % (group2[i][3], group2[i+1][3], group2[i+2][3]) )
-            self.model.setItem(row, 2, item) 
-
-            i+=3
-            
-            #Position
-            item = QtGui.QStandardItem(str(row+1))
-            self.model.setItem(row, 5, item)
-
-        return self.model
-
-class MainWindow:
+class GUI_MainWindow:
     
     #Get UI components
 
@@ -71,16 +28,34 @@ class MainWindow:
         self.ui = Ui_MainWindow_NMR()
         self.ui.setupUi(self.main_win)
 
-        #Set Date to Current
+
+        #READ JSON DATABASE OF MATERIAL/BULK
+        material_bulk_file = open('Data/material_bulk_database.json', 'r')
+        self.material_bulk_data = json.loads(material_bulk_file.read())
+        material_bulk_file.close()
+
+        self.nmrDataTools = NMRData()
+        
+        self.CalibrationLine_AcomArea()
+
+
+
+
+
+    #************************************************************************#
+    ######################    TAB 1    #######################################
+    #************************************************************************#
+
+
+    def CalibrationLine_AcomArea(self):
+
         self.ui.dateTimeEdit_dateTime.setDateTime(QtCore.QDateTime.currentDateTime())
         self.ui.dateTimeEdit_dateTime.setDisplayFormat("dd/MM/yyyy")
 
-
-
         #GUI Variables
-        user = self.ui.plainTextEdit_user
+        self.user = self.ui.plainTextEdit_user
         self.bulkName = self.ui.comboBox_bulkName
-        dateTime = self.ui.dateTimeEdit_dateTime
+        self.dateTime = self.ui.dateTimeEdit_dateTime
         self.densityBulk = self.ui.plainTextEdit_densityBulk
         self.evaluation_double = self.ui.checkBox_evaluation_other
         self.evaluation_single = self.ui.checkBox_evaluation_single
@@ -88,26 +63,22 @@ class MainWindow:
         self.language_german = self.ui.checkBox_language_german
         self.materialName = self.ui.comboBox_materialName
         self.particleDensity = self.ui.plainTextEdit_particleDensity
-        remarks = self.ui.plainTextEdit_remarks
+        self.remarks = self.ui.plainTextEdit_remarks
         self.surfaceArea_Argon = self.ui.plainTextEdit_surfaceArea_Argon
-        temperature = self.ui.plainTextEdit_temperature
+        self.temperature = self.ui.plainTextEdit_temperature
 
-        user.setPlainText("Alexander Michalowski")
+        self.user.setPlainText("Alexander Michalowski")
         #bulkName.addItems(["Milipore-Wasser_LFG", "Milipore-Wasser"])
         #densityBulk.setPlainText("1")
         #materialName.addItems(["80nmIV", "Test2"])
         #particleDensity.setPlainText("2.14")
-        remarks.setPlainText("#76,#77,#79")
+        self.remarks.setPlainText("#76,#77,#79")
         #surfaceArea_Argon.setPlainText("47.0")
-        temperature.setPlainText("25°C")
+        self.temperature.setPlainText("25°C")
 
-        material_bulk_file = open('Data/material_bulk_database.json', 'r')
-        self.material_bulk_data = json.loads(material_bulk_file.read())
-        material_bulk_file.close()
+        self.MaterialDataLoad("start")
+        self.BulkDataLoad("start")
 
-        self.MaterialBulkDataPreload()
-
-        
         self.run_btn = self.ui.pushButton_run_MeasurementFile
         self.run_btn.clicked.connect(self.fetch_input)
 
@@ -135,44 +106,142 @@ class MainWindow:
         #ADD - DELETE MAT/BULK BUTTONS
         
         self.addMaterial_btn = self.ui.pushButton_AddMaterial
-        self.addMaterial_btn.clicked.connect(self.addMaterialData)
+        self.addMaterial_btn.clicked.connect(lambda:self.addMaterialData(self.ui.comboBox_materialName.currentText(), self.ui.plainTextEdit_surfaceArea_Argon.toPlainText(), self.ui.plainTextEdit_particleDensity.toPlainText()))
 
         self.addBulk_btn = self.ui.pushButton_AddBulk
-        self.addBulk_btn.clicked.connect(self.addBulkData)
+        self.addBulk_btn.clicked.connect(lambda:self.addBulkData(self.ui.comboBox_bulkName.currentText(), self.ui.plainTextEdit_densityBulk.toPlainText()))
 
         self.removeMaterial_btn = self.ui.pushButton_RemoveMaterial
-        self.removeMaterial_btn.clicked.connect(self.removeMaterialData)
+        self.removeMaterial_btn.clicked.connect(lambda:self.removeMaterialData(self.ui.comboBox_materialName.currentText()))
 
         self.removeBulk_btn = self.ui.pushButton_RemoveBulk
-        self.removeBulk_btn.clicked.connect(self.removeBulkData)
+        self.removeBulk_btn.clicked.connect(lambda:self.removeBulkData(self.ui.comboBox_bulkName.currentText()))
 
         self.tableModel = TableModelData()
+
+
+    def addMaterialData(self, materialName, surfaceAreaArgon, particleDensity):
+
+        for i in self.material_bulk_data['materials']:
+            if i['materialName'] == materialName:
+                i['surfaceAreaArgon'] = surfaceAreaArgon
+                i['particleDensity'] = particleDensity
+
+                return 0
         
+        new_entry = [{
+            "materialName": materialName,
+            "surfaceAreaArgon": surfaceAreaArgon,
+            "particleDensity": particleDensity
+        }]
+        materiallist = self.material_bulk_data['materials']
+        self.material_bulk_data['materials'].extend(new_entry)
+        
+        self.MaterialDataLoad("add")
+        self.updateJsonDatabase()
 
 
-    #def addMaterialData(self):
-        #self.material_bulk_data.
 
-    def MaterialBulkDataChange(self, e):
-        print(e)
+    def addBulkData(self, bulkName, densityBulk):
+        
+        for i in self.material_bulk_data['bulk']:
+            if i['bulkName'] == bulkName:
+                i['densityBulk'] = densityBulk
+
+                return 0
+        
+        new_entry = [{
+            "bulkName": bulkName,
+            "densityBulk": densityBulk,
+        }]
+        bulklist = self.material_bulk_data['bulk']
+        self.material_bulk_data['bulk'].extend(new_entry)
+        
+        self.BulkDataLoad("add")
+        self.updateJsonDatabase()
+
+    def removeMaterialData(self, materialName):
+        
+        j=0
+        for i in self.material_bulk_data['materials']:
+            if i['materialName'] == materialName:
+                self.material_bulk_data['materials'].pop(j)
+            j += 1
+        
+        self.MaterialDataLoad("delete")
+        self.updateJsonDatabase()
+
+
+    def removeBulkData(self, bulkName):
+        
+        j=0
+        for i in self.material_bulk_data['bulk']:
+            if i['bulkName'] == bulkName:
+                self.material_bulk_data['bulk'].pop(j)
+            j += 1
+        
+        self.BulkDataLoad("delete")
+        self.updateJsonDatabase()
     
-    def MaterialBulkDataPreload(self):
+
+    def updateJsonDatabase(self):
+        
+        jsonData = json.dumps(self.material_bulk_data)
+
+        material_bulk_file = open('Data/material_bulk_database.json', 'w')
+        material_bulk_file.write(jsonData)
+        material_bulk_file.close()
+
+    def MaterialDataLoad(self,state):
 
         material = []
-        bulk = []
 
         for i in self.material_bulk_data['materials']:
 
             material.append(i['materialName'])
 
+        
+        self.updateMaterialComboBoxes(material,state)
+        
+
+        self.setMaterialProperties()
+        
+
+    def BulkDataLoad(self,state):
+
+        bulk = []
+
         for i in self.material_bulk_data['bulk']:
 
             bulk.append(i['bulkName'])
 
-        self.bulkName.addItems(bulk)
-        self.materialName.addItems(material)
+        self.updateBulkComboBoxes(bulk,state)
+        self.setBulkProperties()
 
+    def updateMaterialComboBoxes(self,material,state):
+        
+        matindex = 0
+
+        if state == "add":
+            matindex = self.materialName.count()
+
+        self.materialName.clear()
+
+        self.materialName.addItems(material)
+        self.materialName.setCurrentIndex(matindex)
         self.setMaterialProperties()
+
+    def updateBulkComboBoxes(self, bulk, state):
+
+        bulkindex = 0
+
+        if state == "add":
+            bulkindex = self.bulkName.count()
+
+        self.bulkName.clear()
+
+        self.bulkName.addItems(bulk)
+        self.bulkName.setCurrentIndex(bulkindex)
         self.setBulkProperties()
 
 
@@ -196,89 +265,10 @@ class MainWindow:
                 self.densityBulk.setPlainText(i['densityBulk'])
 
 
-    #Here we get info for each file
-    def getNMRinfo(self, nmrfile):
-
-        #load xml file
-        tree = ET.parse(nmrfile)
-        
-        #Create a list that will contain the different worksheet items
-        WorkSheets = list()
-        
-        #Add Worksheet-items to list 
-        #[results, data, experiment, instrument, programmsettings, generator]
-        for item in tree.iter("{urn:schemas-microsoft-com:office:spreadsheet}Worksheet"):
-            WorkSheets.append(item)
-            
-
-        #Extract rows from the first worksheet <results>
-        RowsInWorksheet = list()
-        for item in WorkSheets[0].iter('{urn:schemas-microsoft-com:office:spreadsheet}Cell'):
-            RowsInWorksheet.append(item)
-
-        t_value = 0
-        exp_name = ""
-        sample_name = ""
-        file_name = ""
-
-        for row in range(0, len(RowsInWorksheet), 1):
-            #print(str(RowsInWorksheet[row][0].text))
-            if str(RowsInWorksheet[row][0].text)=='T1' or str(RowsInWorksheet[row][0].text)=='T2A':
-                exp_name = str(RowsInWorksheet[row][0].text)
-                t_value = float(str(RowsInWorksheet[row+1][0].text))
-                #print(t_value)
-
-        #Extract rows from the third worksheet <experiment>
-        RowsInWorksheet = list()
-        for item in WorkSheets[2].iter('{urn:schemas-microsoft-com:office:spreadsheet}Cell'):
-            RowsInWorksheet.append(item)
-
-        sample_name = str(RowsInWorksheet[70][0].text)
-        file_name = str(RowsInWorksheet[34][0].text)
-
-        results = [exp_name, sample_name, file_name, t_value  ]
-
-        return results
+    
             
         
-    def CreateTable(self, num, group1, group2):
-        
-        
-        
-        
-        #if table.():
-        
-        
-        #   TABLE VIEW MODEL SOLUTION
-        model = QtGui.QStandardItemModel(num,6)
-        model.setHorizontalHeaderLabels(('Sample Name','T1 Value','T2 Value','Liquid Mass','Particle Mass', 'Position'))
-
-        i=0
-        
-        for row in range(num):
-            
-            #Data from excel
-            item = QtGui.QStandardItem(group1[i][1])
-            model.setItem(row, 0, item)
-            #item = QtGui.QStandardItem("{0:.2f}, {0:.2f}, {0:.2f}".format( group1[i][3], group1[i+1][3], group1[i+2][3] ) )
-            item = QtGui.QStandardItem('%.2f - %.2f - %.2f' % (group1[i][3], group1[i+1][3], group1[i+2][3]) ) 
-            model.setItem(row, 1, item)
-            item = QtGui.QStandardItem('%.2f -  %.2f - %.2f' % (group2[i][3], group2[i+1][3], group2[i+2][3]) )
-            model.setItem(row, 2, item) 
-
-            i+=3
-            
-            #Position
-            item = QtGui.QStandardItem(str(row+1))
-            model.setItem(row, 5, item)
-
-
-        table = self.ui.tableView_mesurementFiles
-        table.setModel(model)
-        table.horizontalHeader().resizeSection(0, 330)
-        table.resizeColumnsToContents()
-
-    #def addRowsTable(self, numOfRows, group1, group2):
+    
         
     def removeSelFiles(self):
 
@@ -298,7 +288,7 @@ class MainWindow:
         #groupedfiles = []
         
         for f in files:
-            results = self.getNMRinfo(f)
+            results = self.nmrDataTools.getNMRinfo(f)
             results.append(f)
             fileInfo.append(results)
 
@@ -341,6 +331,7 @@ class MainWindow:
         
         print(self.groupedT1)
         print(self.groupedT2)
+
         #self.CreateTable(self.numberOfConcentrations, self.groupedT1, self.groupedT2)
         model = self.tableModel.AddRows(self.numberOfConcentrations, self.groupedT1, self.groupedT2)
         
@@ -485,6 +476,6 @@ class MainWindow:
         
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    main_win = MainWindow()
+    main_win = GUI_MainWindow()
     main_win.show()
     sys.exit(app.exec())
