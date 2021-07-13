@@ -13,6 +13,7 @@ from MainWindow import Ui_MainWindow_NMR
 from GUI_Toolbox import TableModelData
 from GUI_Toolbox import NMRData
 from Driver_referenceMeasurement_createFile_importExcel import Driver_referenceMeasurement_createFile_importExcel
+#from Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel import Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel
 
 
 
@@ -37,6 +38,7 @@ class GUI_MainWindow:
         self.nmrDataTools = NMRData()
         
         self.CalibrationLine_AcomArea()
+        self.SurfaceAreaCalculation()
 
 
 
@@ -48,11 +50,11 @@ class GUI_MainWindow:
 
 
     def CalibrationLine_AcomArea(self):
-
+        
+        #GUI Variables
         self.ui.dateTimeEdit_dateTime.setDateTime(QtCore.QDateTime.currentDateTime())
         self.ui.dateTimeEdit_dateTime.setDisplayFormat("dd/MM/yyyy")
 
-        #GUI Variables
         self.user = self.ui.plainTextEdit_user
         self.bulkName = self.ui.comboBox_bulkName
         self.dateTime = self.ui.dateTimeEdit_dateTime
@@ -475,7 +477,297 @@ class GUI_MainWindow:
 
 
     def SurfaceAreaCalculation(self):
-        pass
+    
+        #GUI Variables
+        self.ui.dateTimeEdit_surfaceAreaCalculation_dateTime.setDateTime(QtCore.QDateTime.currentDateTime())
+        self.ui.dateTimeEdit_surfaceAreaCalculation_dateTime.setDisplayFormat("dd/MM/yyyy")
+
+        self.surfaceAreaCalculation_user = self.ui.plainTextEdit_surfaceAreaCalculation_user
+        self.surfaceAreaCalculation_bulkName = self.ui.comboBox_surfaceAreaCalculation_bulkName
+        self.surfaceAreaCalculation_dateTime = self.ui.dateTimeEdit_surfaceAreaCalculation_dateTime
+        self.surfaceAreaCalculation_densityBulk = self.ui.plainTextEdit_surfaceAreaCalculation_densityBulk
+        self.OneRelaxationTime = self.ui.checkBox_surfaceAreaCalculation_OneRelaxationTime
+        self.TwoRelaxationTime = self.ui.checkBox_surfaceAreaCalculation_TwoRelaxationTime
+        self.surfaceAreaCalculation_language_english = self.ui.checkBox_surfaceAreaCalculation_language_english
+        self.surfaceAreaCalculation_language_german = self.ui.checkBox_surfaceAreaCalculation_language_german
+        self.surfaceAreaCalculation_materialName = self.ui.comboBox_surfaceAreaCalculation_materialName
+        self.surfaceAreaCalculation_particleDensity = self.ui.plainTextEdit_surfaceAreaCalculation_particleDensity
+        self.surfaceAreaCalculation_remarks = self.ui.plainTextEdit_surfaceAreaCalculation_remarks
+        self.surfaceAreaCalculation_surfaceArea_Argon = self.ui.plainTextEdit_surfaceAreaCalculation_surfaceArea_Argon
+        self.surfaceAreaCalculation_temperature = self.ui.plainTextEdit_surfaceAreaCalculation_temperature
+
+        self.surfaceAreaCalculation_user.setPlainText("Alexander Michalowski")
+        #surfaceAreaCalculation_bulkName.addItems(["Milipore-Wasser_LFG", "Milipore-Wasser"])
+        #surfaceAreaCalculation_densityBulk.setPlainText("1")
+        #surfaceAreaCalculation_materialName.addItems(["80nmIV", "Test2"])
+        #surfaceAreaCalculation_particleDensity.setPlainText("2.14")
+        self.surfaceAreaCalculation_remarks.setPlainText("#76,#77,#79")
+        #surfaceAreaCalculation_surfaceArea_Argon.setPlainText("47.0")
+        self.surfaceAreaCalculation_temperature.setPlainText("25°C")
+
+
+        self.run_btn_surfaceAreaCalculation = self.ui.pushButton_surfaceAreaCalculation_run
+        self.run_btn_surfaceAreaCalculation.clicked.connect(self.fetch_input_surfaceAreaCalculation)
+
+
+        #ADD - DELETE FILES BUTTONS
+        self.add_btn_surfaceAreaCalculation = self.ui.pushButton_surfaceAreaCalculation_AddMesurementFiles
+        self.add_btn_surfaceAreaCalculation.clicked.connect(self.addFiles_surfaceAreaCalculation)
+
+        self.remove_btn_surfaceAreaCalculation = self.ui.pushButton_surfaceAreaCalculation_RemoveAllMesurementFiles
+        self.remove_btn_surfaceAreaCalculation.clicked.connect(self.removeFiles_surfaceAreaCalculation)
+        
+        self.removeSel_btn_surfaceAreaCalculation = self.ui.pushButton_surfaceAreaCalculation_RemoveSelectedMeasrementFiles
+        self.removeSel_btn_surfaceAreaCalculation.clicked.connect(self.removeSelFiles_surfaceAreaCalculation)
+
+        
+        
+        #COMBO BOXES
+        self.comboMaterial_surfaceAreaCalculation = self.ui.comboBox_surfaceAreaCalculation_materialName
+        self.comboMaterial_surfaceAreaCalculation.currentTextChanged.connect(self.setMaterialProperties_surfaceAreaCalculation)
+
+        self.comboBulk_surfaceAreaCalculation = self.ui.comboBox_surfaceAreaCalculation_bulkName
+        self.comboBulk_surfaceAreaCalculation.currentTextChanged.connect(self.setBulkProperties_surfaceAreaCalculation)
+
+        
+        #ADD - DELETE MAT/BULK BUTTONS
+        
+        self.addMaterial_btn_surfaceAreaCalculation = self.ui.pushButton_surfaceAreaCalculation_AddMaterial
+        self.addMaterial_btn_surfaceAreaCalculation.clicked.connect(lambda:self.addMaterialData(self.ui.comboBox_surfaceAreaCalculation_materialName.currentText(), self.ui.plainTextEdit_surfaceAreaCalculation_surfaceArea_Argon.toPlainText(), self.ui.plainTextEdit_surfaceAreaCalculation_particleDensity.toPlainText()))
+
+        self.addBulk_btn_surfaceAreaCalculation = self.ui.pushButton_surfaceAreaCalculation_AddBulk
+        self.addBulk_btn_surfaceAreaCalculation.clicked.connect(lambda:self.addBulkData(self.ui.comboBox_surfaceAreaCalculation_bulkName.currentText(), self.ui.plainTextEdit_surfaceAreaCalculation_densityBulk.toPlainText()))
+
+        self.removeMaterial_btn_surfaceAreaCalculation = self.ui.pushButton_surfaceAreaCalculation_RemoveMaterial
+        self.removeMaterial_btn_surfaceAreaCalculation.clicked.connect(lambda:self.removeMaterialData(self.ui.comboBox_surfaceAreaCalculation_materialName.currentText()))
+
+        self.removeBulk_btn_surfaceAreaCalculation = self.ui.pushButton_surfaceAreaCalculation_RemoveBulk
+        self.removeBulk_btn_surfaceAreaCalculation.clicked.connect(lambda:self.removeBulkData(self.ui.comboBox_surfaceAreaCalculation_bulkName.currentText()))
+
+        self.tableModel_surfaceAreaCalculation = TableModelData()
+
+
+    def setMaterialProperties_surfaceAreaCalculation(self):
+        
+        matName = self.surfaceAreaCalculation_materialName.currentText()
+
+        for i in self.material_bulk_data['materials']:
+
+            if i['materialName'] == (matName):
+                self.surfaceAreaCalculation_particleDensity.setPlainText(i['particleDensity'])
+                self.surfaceAreaCalculation_surfaceArea_Argon.setPlainText(i['surfaceAreaArgon'])
+
+
+    def setBulkProperties_surfaceAreaCalculation(self):
+        
+        bName = self.surfaceAreaCalculation_bulkName.currentText()
+
+        for i in self.material_bulk_data['bulk']:
+
+            if i['bulkName'] == (bName):
+                self.surfaceAreaCalculation_densityBulk.setPlainText(i['densityBulk'])
+
+        
+    def removeSelFiles_surfaceAreaCalculation(self):
+
+        #fetch selected
+        plainText_selectedFiles = self.ui.plainTextEdit_surfaceAreaCalculation_RemoveSelectedFilesMeasrementFiles
+        selectedRowsDEL = plainText_selectedFiles.toPlainText().split(",")
+
+        selectedRowsDEL = [int(i) for i in selectedRowsDEL]
+        
+
+        self.tableModel_surfaceAreaCalculation.DelRows(selectedRowsDEL)
+        
+    #Grouping Files to cook them up for the script
+    def groupFiles_surfaceAreaCalculation(self, files):
+
+        fileInfo = list()
+        #groupedfiles = []
+        
+        for f in files:
+            results = self.nmrDataTools.getNMRinfo(f)
+            results.append(f)
+            fileInfo.append(results)
+
+        #print(fileInfo)
+        #Update UI
+
+        #create groupedfiles for script input
+        fileInfo.sort(key=lambda x: x[1])
+        groupedBySampleName = functools.reduce(lambda l, x: (l.append([x]) if l[-1][0][1] != x[1] else l[-1].append(x)) or l, fileInfo[1:], [[fileInfo[0]]]) if fileInfo else []
+        
+        self.numberOfConcentrations_surfaceAreaCalculation = 0
+
+        self.groupedT1_surfaceAreaCalculation = list()
+        self.groupedT2_surfaceAreaCalculation = list()
+
+        for groupRow in groupedBySampleName:
+
+            self.numberOfConcentrations_surfaceAreaCalculation += 1
+            #print("GROUP")    
+            #print(groupRow)
+
+            if len(groupRow) != 6:
+                msgBox = QtWidgets.QMessageBox()
+                msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+                msgBox.setText("Wrong Input!!")
+                msgBox.setWindowTitle("Eisai malakas")
+                msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                returnValue = msgBox.exec()
+                return 0
+            
+
+            for groupT in groupRow:
+
+                if str(groupT[0]) == "T2A":
+                    self.groupedT2_surfaceAreaCalculation.append(groupT)
+                elif str(groupT[0]) == "T1":
+                    self.groupedT1_surfaceAreaCalculation.append(groupT)
+                else:
+                    return 0
+
+        #self.CreateTable(self.numberOfConcentrations, self.groupedT1, self.groupedT2)
+        model = self.tableModel_surfaceAreaCalculation.AddRows(self.numberOfConcentrations_surfaceAreaCalculation, self.groupedT1_surfaceAreaCalculation, self.groupedT2_surfaceAreaCalculation)
+        
+        table = self.ui.tableView_surfaceAreaCalculation_mesurementFiles
+        table.setModel(model)
+        table.horizontalHeader().resizeSection(0, 330)
+        table.resizeColumnsToContents()    
+
+
+
+
+
+    #ADD REMOVE FILES LOGIC
+    def addFiles_surfaceAreaCalculation(self):
+        textForOpeningFiles = "Please select Files for Concentration"
+        files = fileopenbox(textForOpeningFiles, "Dunno", default = "", filetypes= "*.txt", multiple=True)
+        if files:
+            #print(files)
+            self.groupFiles_surfaceAreaCalculation(files)
+            
+
+
+        else:
+            #print("exit")
+            pass
+        
+    def removeFiles_surfaceAreaCalculation(self):
+        self.tableModel_surfaceAreaCalculation.RemoveAllRows()
+
+
+
+
+    #RUN BUTTON
+    def fetch_input_surfaceAreaCalculation(self):
+        
+        surfaceAreaCalculation_user = self.ui.plainTextEdit_surfaceAreaCalculation_user
+        surfaceAreaCalculation_bulkName = self.ui.comboBox_surfaceAreaCalculation_bulkName
+        surfaceAreaCalculation_dateTime = self.ui.dateTimeEdit_surfaceAreaCalculation_dateTime
+        surfaceAreaCalculation_densityBulk = self.ui.plainTextEdit_surfaceAreaCalculation_densityBulk
+        OneRelaxationTime = self.ui.checkBox_surfaceAreaCalculation_OneRelaxationTime
+        TwoRelaxationTime = self.ui.checkBox_surfaceAreaCalculation_TwoRelaxationTime
+        surfaceAreaCalculation_language_english = self.ui.checkBox_surfaceAreaCalculation_language_english
+        surfaceAreaCalculation_language_german = self.ui.checkBox_surfaceAreaCalculation_language_german
+        surfaceAreaCalculation_materialName = self.ui.comboBox_surfaceAreaCalculation_materialName
+        surfaceAreaCalculation_particleDensity = self.ui.plainTextEdit_surfaceAreaCalculation_particleDensity
+        surfaceAreaCalculation_remarks = self.ui.plainTextEdit_surfaceAreaCalculation_remarks
+        surfaceAreaCalculation_surfaceArea_Argon = self.ui.plainTextEdit_surfaceAreaCalculation_surfaceArea_Argon
+        surfaceAreaCalculation_temperature = self.ui.plainTextEdit_surfaceAreaCalculation_temperature
+
+        #print(dateTime.dateTime().toString(self.ui.dateTimeEdit_surfaceAreaCalculation_dateTime.displayFormat()))
+
+        model = self.ui.tableView_surfaceAreaCalculation_mesurementFiles.model()
+        print("aaaa "+str(self.numberOfConcentrations_surfaceAreaCalculation))
+        data = [[0 for x in range(model.columnCount())] for y in range(self.numberOfConcentrations_surfaceAreaCalculation)]
+        
+        files_T1 = [[0 for x in range(3)] for y in range(self.numberOfConcentrations_surfaceAreaCalculation)]
+        files_T2 = [[0 for x in range(3)] for y in range(self.numberOfConcentrations_surfaceAreaCalculation)]
+        filespath_T1 = [[0 for x in range(3)] for y in range(self.numberOfConcentrations_surfaceAreaCalculation)]
+        filespath_T2 = [[0 for x in range(3)] for y in range(self.numberOfConcentrations_surfaceAreaCalculation)]
+        
+        liquidmassfromTable = list()
+        particlemassfromTable = list()
+        print(particlemassfromTable)
+        group_row = 0
+
+        for row in range(model.rowCount()):
+            #data.append([])
+
+            pos = int(model.data( model.index(row, 5)))
+            print(pos)
+            if pos < 1 or pos > self.numberOfConcentrations_surfaceAreaCalculation:
+                msgBox = QtWidgets.QMessageBox()
+                msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+                msgBox.setText("Wrong position given")
+                msgBox.setWindowTitle("Eisai malakas")
+                msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                returnValue = msgBox.exec()
+                return 0
+
+            #Populate filenames in the correct order
+            
+            for i in range(3):
+                files_T1[pos-1][i] = self.groupedT1_surfaceAreaCalculation[group_row][2]
+                files_T2[pos-1][i] = self.groupedT2_surfaceAreaCalculation[group_row][2]
+                filespath_T1[pos-1][i] = self.groupedT1_surfaceAreaCalculation[group_row][4]
+                filespath_T2[pos-1][i] = self.groupedT2_surfaceAreaCalculation[group_row][4]
+                group_row += 1
+
+            for column in range(model.columnCount()):
+                print("ooooo "+str(column))
+                index = model.index(row, column)
+                # We suppose data are strings
+                data[pos-1][column] = str(model.data(index)) 
+
+        for j in range(self.numberOfConcentrations_surfaceAreaCalculation) :
+            liquidmassfromTable.append(float(data[j][3]))
+            particlemassfromTable.append(float(data[j][4]))
+
+
+        allFiles = files_T1 + files_T2
+
+        print(liquidmassfromTable)
+        print(particlemassfromTable)
+        print(allFiles)
+        print(data)
+        
+        if OneRelaxationTime.isChecked() == True and TwoRelaxationTime.isChecked() == False:
+            Relaxation = "One"
+        elif OneRelaxationTime.isChecked() == False and TwoRelaxationTime.isChecked() == True:
+            Relaxation = "Two"
+        else:
+            msgBox = QtWidgets.QMessageBox()
+            msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+            msgBox.setText("both checked Relaxation")
+            msgBox.setWindowTitle("Eisai malakas")
+            msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            returnValue = msgBox.exec()
+            return 0
+        
+        if surfaceAreaCalculation_language_english.isChecked() == True and surfaceAreaCalculation_language_german.isChecked() == False:
+            language = "english"
+        elif surfaceAreaCalculation_language_english.isChecked() == False and surfaceAreaCalculation_language_german.isChecked() == True:
+            language = "german"
+        else:
+            msgBox = QtWidgets.QMessageBox()
+            msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+            msgBox.setText("double checked language")
+            msgBox.setWindowTitle("Eisai malakas")
+            msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            returnValue = msgBox.exec()
+            return 0
+        
+#        if Relaxation == "One":
+#           driver = Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel
+        #elif Relaxation == "Two":
+         #   driver = Driver_surfaceAreaCalculation_twoRelaxationTimes_createFile
+#        else:
+#           print ("you lost")
+
+        #driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, surfaceAreaCalculation_remarks.toPlainText(), surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime().toString("yyyyMMdd"), self.numberOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable, particlemassfromTable )
+
 
 
 
