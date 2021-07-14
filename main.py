@@ -51,11 +51,11 @@ class GUI_MainWindow:
 
 
     def CalibrationLine_AcomArea(self):
-
+        
+        #GUI Variables
         self.ui.dateTimeEdit_dateTime.setDateTime(QtCore.QDateTime.currentDateTime())
         self.ui.dateTimeEdit_dateTime.setDisplayFormat("dd/MM/yyyy")
 
-        #GUI Variables
         self.user = self.ui.plainTextEdit_user
         self.bulkName = self.ui.comboBox_bulkName
         self.dateTime = self.ui.dateTimeEdit_dateTime
