@@ -178,53 +178,24 @@ class NmrToolbox():
     
         return allRelaxationTimes, allMagnetizations, allFiles
 
-
-    def getCalibrationResults(T1_T2, numberOfConcentrations):
-        # if __name__ == "__main__":
-            
-        #numberOfConcentrations = 2
-    
+    def getSurfaceAreaMeasuremntResults2(filespath, files):
         
         allRelaxationTimes = list()
         allMagnetizations = list()
         allFiles = list()
-        
-        for concentrationNumber in range(1, numberOfConcentrations+1):
-            textForOpeningFiles = "Please select Files for Concentration #" + str(concentrationNumber)
-            if 'Windows' in platform.platform():
-                # Rechner Uni
-                if T1_T2 == 'T1':
-                    files = fileopenbox(textForOpeningFiles, "RELAXATION T1", default = "m:/AcornArea/Alexander Michalowski/*", filetypes= "*.txt", multiple=True)
-                else:
-                    files = fileopenbox(textForOpeningFiles, "RELAXATION T2", default = "m:/AcornArea/Alexander Michalowski/*", filetypes= "*.txt", multiple=True)
-                # # Laptop Ute
-                # if T1_T2 == 'T1':
-                #     files = fileopenbox(textForOpeningFiles, "RELAXATION T1", default = "T:/Ute Schmidt/Ute Schmidt/*", filetypes= "*.txt", multiple=True)
-                # else:
-                #     files = fileopenbox(textForOpeningFiles, "RELAXATION T2", default = "T:/Ute Schmidt/Ute Schmidt/*", filetypes= "*.txt", multiple=True)
-                # Save only realtive path starting from the folder 'AcornArea/'
-                files_forExcel = []
-                for file in files:
-                    files_forExcel.append(file.replace('m:/AcornArea/Alexander Michalowski/', ''))
-            if 'Linux' in platform.platform():
-                if T1_T2 == 'T1':
-                    files = fileopenbox(textForOpeningFiles, "RELAXATION T1", default = "/mnt/Messdaten/AcornArea/*", filetypes= "*.txt", multiple=True)
-                else:
-                    files = fileopenbox(textForOpeningFiles, "RELAXATION T2", default = "/mnt/Messdaten/AcornArea/*", filetypes= "*.txt", multiple=True)
+        i=0
+        for f in files:
+            
                 
-                # Save only realtive path starting from the folder 'AcornArea/'
-                files_forExcel = []
-                for file in files:
-                    files_forExcel.append(file.replace('/mnt/Messdaten/AcornArea/', ''))
-                
-            allFiles.append(files_forExcel)
+            allFiles.append(f)
             
             relaxationTimes = list()
             magnetization = list()
             
     
-            for fileName in files:
+            for fileName in filespath[i]:
             # Results, Plot of all Files
+                print(fileName)
                 results, data = NmrToolbox.importNMRDATA(fileName)
             
                 relaxationTimes.append(results[0])
@@ -234,12 +205,13 @@ class NmrToolbox():
             allRelaxationTimes.append([])
             allMagnetizations.append([])
             
-            allRelaxationTimes[concentrationNumber-1] = relaxationTimes
-            allMagnetizations[concentrationNumber-1] = magnetization
+            allRelaxationTimes[i] = relaxationTimes
+            allMagnetizations[i] = magnetization
+            i+=1
     
         return allRelaxationTimes, allMagnetizations, allFiles
-    
 
+    
     def getSurfaceAreaMeasuremntResults(T1_T2, bulk_suspension):
         
         if bulk_suspension == 'Bulk':
