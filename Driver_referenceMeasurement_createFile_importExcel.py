@@ -13,10 +13,7 @@ import matplotlib.pyplot as plt
 from ImportNmrData import NmrToolbox
 
 import locale
-locale.setlocale(locale.LC_NUMERIC, "de_DE")
-plt.rcdefaults()
-plt.rcParams['axes.formatter.use_locale'] = True
-plt.rcParams.update({'font.size': 12})
+
 
 from matplotlib import rcParams
 
@@ -26,13 +23,22 @@ class Driver_referenceMeasurement_createFile_importExcel:
      
 
     
-    def runDriver(self, materialName, evaluation, bulkName, user, language, remarks, temperature, surfaceArea_Argon, densityBulk, particleDensity, date, numofcon, filesT1, filesT2, filespathT1, filespathT2, liquidMass, particleMass  ):
+    def runDriver(self, materialName, evaluation, bulkName, user, lang, remarks, temperature, surfaceArea_Argon, densityBulk, particleDensity, date, numofcon, filesT1, filesT2, filespathT1, filespathT2, liquidMass, particleMass  ):
 
         rcParams.update({'figure.autolayout': True})
 
         #materialName = '80nmIV'
 
         thickener = False
+
+        if lang == 'english':
+            pass
+        elif lang == "german":
+            locale.setlocale(locale.LC_NUMERIC, "de_DE")
+            plt.rcdefaults()
+            plt.rcParams['axes.formatter.use_locale'] = True
+            plt.rcParams.update({'font.size': 12})
+
         #evaluation = 'single'
 
         #bulkName = 'Milipore-Wasser_LFG'
@@ -46,7 +52,7 @@ class Driver_referenceMeasurement_createFile_importExcel:
         ## Additional information about measurement
         #date = '20210317'
         #temperature = '25°C'
-        print (date)
+        #print (date)
         ## Surface area of particles measured with BET-method and argon in m2/g (Necessary to calculate ka)
         #surfaceArea_Argon = 47.0
 
@@ -71,6 +77,12 @@ class Driver_referenceMeasurement_createFile_importExcel:
         #T1 = [[1771.9,1791.7,1746.1],[1766.7,1786.4,1854.4],[1843.2,1832.5,1757],[1762.5,1749.3,1733.6],[1774.2,1838.6,1739.1],[1689.2,1997.7,1769.0]]
         #T2 = [[1739.6,1762.1,1749.5],[1576.2,1578.8,1597.4],[1466.8,1463.6,1478.9],[1375.5,1378.7,1379.9],[980.1,989.5,985.8],[902.0,905.1,919.8]]
 
+        # print()
+        # print ("T1 FILES PATH")
+        # print (filespathT1, filesT1)
+        # print ("T2 FILES PATH")
+        # print (filespathT2, filesT2)
+
         # T1 and Mz lists are generated - only select files for T1 here
         #T1, Mz, fileNames_T1 = NmrToolbox.getCalibrationResults('T1', 4)
         T1, Mz, fileNames_T1 = NmrToolbox.getCalibrationResults2(filespathT1, filesT1, numofcon)
@@ -91,6 +103,7 @@ class Driver_referenceMeasurement_createFile_importExcel:
 
         # Mz_Bulk = [102,100,101]
         # Mxy_Bulk = [283,284,285]
+
 
 
 
@@ -133,27 +146,27 @@ class Driver_referenceMeasurement_createFile_importExcel:
 
         # Calculate surface relaxivity ka for T1 and T2 measurement
         if thickener == False:
-            ref.calculate_surfaceRelaxivity('T1', evaluation, calculationOfVolFraction='mass', plot=True, language='german')
-            ref.calculate_surfaceRelaxivity('T1', evaluation, calculationOfVolFraction='Mz', plot=True, language='german')
+            ref.calculate_surfaceRelaxivity('T1', evaluation, lang, calculationOfVolFraction='mass', plot=True)
+            ref.calculate_surfaceRelaxivity('T1', evaluation, lang, calculationOfVolFraction='Mz', plot=True)
             
             # Create T1/T2 vs. concentration and T1/T2 vs. absolute surface area (information about surface chemistry?)
             # slope_conc, slope_surf = ref.plot_T1_T2_ratio('german')
             
             # Calculate surface relaxivity in case of nonporous material
             if not porousMaterial:
-                ref.calculate_surfaceRelaxivity('T2', evaluation, calculationOfVolFraction='mass', plot=True,  language='german')
-                ref.calculate_surfaceRelaxivity('T2', evaluation, calculationOfVolFraction='Mxy', plot=True,  language='german')
+                ref.calculate_surfaceRelaxivity('T2', evaluation, lang, calculationOfVolFraction='mass', plot=True)
+                ref.calculate_surfaceRelaxivity('T2', evaluation, lang, calculationOfVolFraction='Mxy', plot=True)
             
             ref.setMeasurementFileNames(fileNames_T1, fileNames_T2)
             ref.createRelaxivityFile(evaluation)    
             
         # Plot calibration for thickener in dispersant    
         else:
-            ref.plotCalibrationWithThickener('T1',calculationOfVolFraction='mass', language='german')
-            ref.plotCalibrationWithThickener('T1',calculationOfVolFraction='Mz', language='german')
+            ref.plotCalibrationWithThickener('T1',calculationOfVolFraction='mass', languange = lang)
+            ref.plotCalibrationWithThickener('T1',calculationOfVolFraction='Mz', languange = lang)
             
-            ref.plotCalibrationWithThickener('T2',calculationOfVolFraction='mass', language='german')
-            ref.plotCalibrationWithThickener('T2',calculationOfVolFraction='Mxy', language='german')
+            ref.plotCalibrationWithThickener('T2',calculationOfVolFraction='mass', languange = lang)
+            ref.plotCalibrationWithThickener('T2',calculationOfVolFraction='Mxy', languange = lang)
             
 
 

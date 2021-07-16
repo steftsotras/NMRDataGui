@@ -17,7 +17,7 @@ from ImportNmrData import NmrToolbox
 # =============================================================================
 class Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel:
     
-    def runDriver(self, materialName, Relaxtion, bulkName, user, language, remarks, temperature, surfaceArea_Argon, densityBulk, particleDensity, date, numofcon, filesT1, filesT2, filespathT1, filespathT2, liquidMass, particleMass, filepathReference):
+    def runDriver(self, materialName, Relaxtion, bulkName, user, language, remarks, temperature, surfaceArea_Argon, densityBulk, particleDensity, date, numofcon, filesT1, filesT2, filespathT1, filespathT2, liquidMass, particleMass, filepathReference, materialName_ReferenceMesurementFiles, date_ReferenceMesurementFiles):
         
         # materialName = 'CarbonBlack_N375_mit_N134'
         
@@ -53,8 +53,17 @@ class Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel:
         #T1_Bulk, Mz_Bulk, fileNames_T1_Bulk = NmrToolbox.getSurfaceAreaMeasuremntResults('T1', 'Bulk')
         #T2_Bulk, Mxy_Bulk, fileNames_T2_Bulk = NmrToolbox.getSurfaceAreaMeasuremntResults('T2', 'Bulk')
 
-        T1_Bulk, Mz_Bulk, fileNames_T1_Bulk = NmrToolbox.getSurfaceAreaMeasuremntResults2(filespathT1[0], filesT1[0])
-        T2_Bulk, Mxy_Bulk, fileNames_T2_Bulk = NmrToolbox.getSurfaceAreaMeasuremntResults2(filespathT2[0] ,filesT2[0])
+        # print()
+        # print ("BULK FILES PATH")
+        # print (filespathT1[0], filesT1[0])
+        # print (filespathT2[0], filesT2[0])
+        # print ("Surface FILES PATH")
+        # print (filespathT1[1], filesT1[1])
+        # print (filespathT2[1], filesT2[1])
+
+
+        T1_Bulk, Mz_Bulk, fileNames_T1_Bulk = NmrToolbox.getSurfaceAreaMeasuremntResults2([filespathT1[0]], [filesT1[0]])
+        T2_Bulk, Mxy_Bulk, fileNames_T2_Bulk = NmrToolbox.getSurfaceAreaMeasuremntResults2([filespathT2[0]] ,[filesT2[0]])
         
         # Alternative: Set relaxation times without selecting measurement files
         # T1_Bulk = [2637.1115,	2708.516693,	2564.65787]
@@ -66,8 +75,8 @@ class Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel:
         # fileNames_T2_Bulk = ['M:\\AcornArea\\Ute Schmidt\\2020-05-27 103235_MP Wasser LFG-T₂ measurement.nmrdata', 'M:\\AcornArea\\Ute Schmidt\\2020-06-10 142055-MP Wasser LFG-T₂ measurement.nmrdata', 'M:\\AcornArea\\Ute Schmidt\\2020-06-10 142434-MP Wasser LFG-T₂ measurement.nmrdata']
         
         # Relaxation time T1 and T2 and initial magnetization of suspension 
-        T1, Mz, fileNames_T1_Suspension = NmrToolbox.getSurfaceAreaMeasuremntResults2(filespathT1[1], filesT1[1])
-        T2, Mxy, fileNames_T2_Suspension = NmrToolbox.getSurfaceAreaMeasuremntResults2(filespathT2[1] ,filesT2[1])
+        T1, Mz, fileNames_T1_Suspension = NmrToolbox.getSurfaceAreaMeasuremntResults2([filespathT1[1]], [filesT1[1]])
+        T2, Mxy, fileNames_T2_Suspension = NmrToolbox.getSurfaceAreaMeasuremntResults2([filespathT2[1]] ,[filesT2[1]])
         
         # Alternative: Set relaxation times without selecting measurement files
         # T1 = [2497.643177,2343.169759,2428.079764]
@@ -95,6 +104,10 @@ class Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel:
         
         # Set name of relaxivity file, surface area of BET-measurement temperature and date in object
         mat.setRelaxivityFileName(filepathReference)
+
+        mat.setMaterialName_ReferenceMesurementFiles(materialName_ReferenceMesurementFiles)
+        mat.setDate_ReferenceMesurementFiles(date_ReferenceMesurementFiles)
+
         mat.setSurfaceArea(surfaceArea_Argon)
         mat.setTemperature(temperature)
         mat.setDate(date)

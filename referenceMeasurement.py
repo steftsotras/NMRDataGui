@@ -14,6 +14,7 @@ import json
 #import matplotlib2tikz
 import pandas as pd
 import glob
+import os
 
 
 
@@ -24,7 +25,11 @@ from NMR import NMR
 class referenceMeasurement(NMR):
 
         def __init__(self,materialName=[],bulk=[],surfaceArea_Argon=[],temperature=[],date=[],weightFraction=[],densityBulk=[],densityParticle=[],relaxivityFileName=[],particleMass=[],liquidMass=[]):
-            NMR.__init__(self,materialName,bulk,surfaceArea_Argon,temperature,date,weightFraction,densityBulk,densityParticle,relaxivityFileName)    
+            NMR.__init__(self,materialName,bulk,surfaceArea_Argon,temperature,date,weightFraction,densityBulk,densityParticle,relaxivityFileName)   
+
+            directory = os.path.dirname('../surfaceRelaxivity/' + self.bulk+'/')
+            if not os.path.exists(directory):
+                os.makedirs(directory) 
             
         
             
@@ -56,7 +61,7 @@ class referenceMeasurement(NMR):
             relaxationRates = 1/np.asarray(relaxationTimesList)
             return relaxationRates, standardDeviationList
         
-        def calculate_surfaceRelaxivity(self,T1_T2='T2',evaluation='single', calculationOfVolFraction='mass', plot=False, language = 'english'):
+        def calculate_surfaceRelaxivity(self,T1_T2='T2',evaluation='single', language='english', calculationOfVolFraction='mass', plot=False):
             """Get surface relaxivity ka from slope of plot of relaxationRates vs. (volumeFraction * surfaceArea) or from plot of relaxationRates vs. volumeFraction
  
              Parameters
@@ -320,6 +325,8 @@ class referenceMeasurement(NMR):
         def createRelaxivityFile(self, evaluation):
             # Create excel file with all information and the calculated surface relaxivity
             
+
+
             # Define file name 
             if evaluation == 'single':
 

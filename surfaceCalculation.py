@@ -28,6 +28,9 @@ class surfaceCalculation(NMR):
             # Additional entry 'mass' for alternative calculation of surface area via molar ratio: k_a = l_ads*rho_ads*(1/T_ads - 1/T_Bulk) and S = (1/T - 1/T_Bulk)/(m_p/m_F * k_a), in m2/g
             self.surfaceArea = {'mass':{'T1':[],'T2':[]}, 'Mz':[], 'Mxy':[]}
             self.standardDeviation = {'mass':{'T1':[],'T2':[]}, 'Mz':[], 'Mxy':[]} # Standard Deviation of surface area (due to repeated measurement of T1 or T2 of the suspension)
+
+            #self.materialName_fromRelaxivityFile = 
+            #self.date_fromRelaxivityFile = 
             
             
         def setInitialMagnetizationBulk (self,initialMagnetizationBulk,T1_T2):
@@ -52,6 +55,13 @@ class surfaceCalculation(NMR):
         def setRelaxivityFileName(self,relaxivityFileName):
             # Set name of relaxivityFile which contains ka for surface area calculation
             self.relaxivityFileName = relaxivityFileName
+
+
+        def setMaterialName_ReferenceMesurementFiles(self, materialName_ReferenceMesurementFiles):
+            self.materialName_fromRelaxivityFile = materialName_ReferenceMesurementFiles
+
+        def setDate_ReferenceMesurementFiles(self, date_ReferenceMesurementFiles):
+            self.date_fromRelaxivityFile = date_ReferenceMesurementFiles
         
         def setRelaxationTimeBulk(self,T1_T2,relaxationTimes):
             # Set relaxation time of bulk in ms

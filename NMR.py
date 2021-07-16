@@ -29,7 +29,7 @@ class NMR:
             self.volumeFraction = {'mass':[], 'Mz':[], 'Mxy':[]} # Volume fraction calculated with weight of particle and liquid or with initial magnetization Mz and Mxy
             self.relaxationTime = {'T1':[],'T2':[],'T1_T2_ratio':[]} # dict with entries for T1 and T2 in ms and for T1/T2-ratio
             self.surfaceRelaxivity = {'mass':{'T1':[],'T2':[]}, 'Mz':[], 'Mxy':[]} # Surface relaxivity k_a (calculated with reference material) for different calculations of volume fraction (with mass ot initial magnetization Mz or Mxy)
-            self.relaxivityFileName = relaxivityFileName # Name of file with reference measurement
+            self.relaxivityFileName = relaxivityFileName # Name of file with reference measurement          
             self.measurementFileNames = {'T1': [],'T2': []}
             self.initialMagnetization = {'T1':[],'T2':[]}
     

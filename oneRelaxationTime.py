@@ -11,6 +11,7 @@ from surfaceCalculation import surfaceCalculation
 import json
 import numpy as np
 import pandas as pd
+import os
 
 # Create class oneRelaxationTime which inherits from surfaceCalculation for calculation of surface area from measurments exhibiting only one relaxation time
 class oneRelaxationTime(surfaceCalculation):
@@ -55,9 +56,14 @@ class oneRelaxationTime(surfaceCalculation):
             # Calculate T1/T2 ratio if both relaxation times were measured
             if self.relaxationTime['T1'] and self.relaxationTime['T2']:
                 self.relaxationTime['T1_T2_ratio'] = self.calculateT1_T2_ratio(np.mean(self.relaxationTime['T1']),np.mean(self.relaxationTime['T2']))
-                              
+
+            
+            directory = os.path.dirname('../Results/' + self.bulk+'/')
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+
             # Define name of excel file    
-            fileName = '../Results/' + self.bulk + '/' + str(self.date) + '_' + self.materialName + '_' + self.bulk  + '.xlsx'
+            fileName = '../Results/' + self.bulk + '/' + str(self.date) + '_' + self.materialName + '_' + self.remarks + '_' + 'calibration' + '_' + str(self.date_fromRelaxivityFile) + '_' + self.materialName_fromRelaxivityFile + '_' + self.bulk  + '.xlsx'
             
             # if not isinstance(self.volumeFraction['Mz'],list):
             #     self.volumeFraction['Mz'] = self.volumeFraction['Mz'].tolist()

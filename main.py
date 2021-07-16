@@ -16,6 +16,8 @@ from GUI_Toolbox import NMRData
 from Driver_referenceMeasurement_createFile_importExcel import Driver_referenceMeasurement_createFile_importExcel
 from Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel import Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel
 
+import pandas as pd
+
 
 
 
@@ -589,6 +591,12 @@ class GUI_MainWindow:
             self.tableReferenceMesurementFiles.verticalHeader().hide()
             self.tableReferenceMesurementFiles.resizeColumnsToContents()
 
+            data = pd.read_excel(self.referenceFilepath, sheet_name='general',header=None)
+
+            self.materialName_ReferenceMesurementFiles = data[1][0]
+            self.date_ReferenceMesurementFiles = data[1][5]
+
+
         else:
             pass
         
@@ -815,7 +823,7 @@ class GUI_MainWindow:
 #           print ("you lost")
         print("fliepath")
         print(type(self.referenceFilepath))
-        driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, surfaceAreaCalculation_remarks.toPlainText(), surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), self.numberOfConcentrations_surfaceAreaCalculation, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[1], particlemassfromTable[1], self.referenceFilepath)
+        driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, surfaceAreaCalculation_remarks.toPlainText(), surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), self.numberOfConcentrations_surfaceAreaCalculation, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[1], particlemassfromTable[1], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles)
 
 
 
