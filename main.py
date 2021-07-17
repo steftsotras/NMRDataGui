@@ -474,13 +474,11 @@ class GUI_MainWindow:
         elif language_english.isChecked() == False and language_german.isChecked() == True:
             language = "german"
         else:
-            msgBox = QtWidgets.QMessageBox()
-            msgBox.setIcon(QtWidgets.QMessageBox.Warning)
-            msgBox.setText("double checked language")
-            msgBox.setWindowTitle("Eisai malakas")
-            msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
-            returnValue = msgBox.exec()
-            return 0
+            language = "english"
+            driver = Driver_referenceMeasurement_createFile_importExcel()
+            driver.runDriver(materialName.currentText(), evaluation, bulkName.currentText(), user.toPlainText(), language, remarks.toPlainText(), temperature.toPlainText(), float(surfaceArea_Argon.toPlainText()), float(densityBulk.toPlainText()), float(particleDensity.toPlainText()), dateTime.dateTime().toString("yyyyMMdd"), self.numberOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable, particlemassfromTable )
+            language = "german"
+
         driver = Driver_referenceMeasurement_createFile_importExcel()
         driver.runDriver(materialName.currentText(), evaluation, bulkName.currentText(), user.toPlainText(), language, remarks.toPlainText(), temperature.toPlainText(), float(surfaceArea_Argon.toPlainText()), float(densityBulk.toPlainText()), float(particleDensity.toPlainText()), dateTime.dateTime().toString("yyyyMMdd"), self.numberOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable, particlemassfromTable )
         

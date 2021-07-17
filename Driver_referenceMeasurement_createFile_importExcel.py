@@ -32,7 +32,11 @@ class Driver_referenceMeasurement_createFile_importExcel:
         thickener = False
 
         if lang == 'english':
-            pass
+            locale.setlocale(locale.LC_NUMERIC, "en_US")
+            plt.rcdefaults()
+            plt.rcParams['axes.formatter.use_locale'] = True
+            plt.rcParams.update({'font.size': 12})
+
         elif lang == "german":
             locale.setlocale(locale.LC_NUMERIC, "de_DE")
             plt.rcdefaults()
