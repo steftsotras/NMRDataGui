@@ -17,7 +17,7 @@ from ImportNmrData import NmrToolbox
 # =============================================================================
 class Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel:
     
-    def runDriver(self, materialName, Relaxtion, bulkName, user, language, remarks, temperature, surfaceArea_Argon, densityBulk, particleDensity, date, numofcon, filesT1, filesT2, filespathT1, filespathT2, liquidMass, particleMass, filepathReference, materialName_ReferenceMesurementFiles, date_ReferenceMesurementFiles):
+    def runDriver(self, materialName, Relaxtion, bulkName, user, language, remarks, temperature, surfaceArea_Argon, densityBulk, particleDensity, date, numofcon, filesT1, filesT2, filespathT1, filespathT2, liquidMass, particleMass, filepathReference, materialName_ReferenceMesurementFiles, date_ReferenceMesurementFiles, index):
         
         # materialName = 'CarbonBlack_N375_mit_N134'
         
@@ -75,8 +75,8 @@ class Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel:
         # fileNames_T2_Bulk = ['M:\\AcornArea\\Ute Schmidt\\2020-05-27 103235_MP Wasser LFG-T₂ measurement.nmrdata', 'M:\\AcornArea\\Ute Schmidt\\2020-06-10 142055-MP Wasser LFG-T₂ measurement.nmrdata', 'M:\\AcornArea\\Ute Schmidt\\2020-06-10 142434-MP Wasser LFG-T₂ measurement.nmrdata']
         
         # Relaxation time T1 and T2 and initial magnetization of suspension 
-        T1, Mz, fileNames_T1_Suspension = NmrToolbox.getSurfaceAreaMeasuremntResults2([filespathT1[1]], [filesT1[1]])
-        T2, Mxy, fileNames_T2_Suspension = NmrToolbox.getSurfaceAreaMeasuremntResults2([filespathT2[1]] ,[filesT2[1]])
+        T1, Mz, fileNames_T1_Suspension = NmrToolbox.getSurfaceAreaMeasuremntResults2([filespathT1[index]], [filesT1[index]])
+        T2, Mxy, fileNames_T2_Suspension = NmrToolbox.getSurfaceAreaMeasuremntResults2([filespathT2[index]] ,[filesT2[index]])
         
         # Alternative: Set relaxation times without selecting measurement files
         # T1 = [2497.643177,2343.169759,2428.079764]

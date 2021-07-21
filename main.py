@@ -733,7 +733,7 @@ class GUI_MainWindow:
         #print(dateTime.dateTime().toString(self.ui.dateTimeEdit_surfaceAreaCalculation_dateTime.displayFormat()))
 
         model = self.ui.tableView_surfaceAreaCalculation_mesurementFiles.model()
-        print("aaaa "+str(self.numberOfConcentrations_surfaceAreaCalculation))
+        #print("aaaa "+str(self.numberOfConcentrations_surfaceAreaCalculation))
         data = [[0 for x in range(model.columnCount())] for y in range(self.numberOfConcentrations_surfaceAreaCalculation)]
         
         files_T1 = [[0 for x in range(3)] for y in range(self.numberOfConcentrations_surfaceAreaCalculation)]
@@ -743,14 +743,13 @@ class GUI_MainWindow:
         
         liquidmassfromTable = list()
         particlemassfromTable = list()
-        print(particlemassfromTable)
         group_row = 0
 
         for row in range(model.rowCount()):
             #data.append([])
 
             pos = int(model.data( model.index(row, 5)))
-            print(pos)
+            #print(pos)
             if pos < 1 or pos > self.numberOfConcentrations_surfaceAreaCalculation:
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Warning)
@@ -770,7 +769,6 @@ class GUI_MainWindow:
                 group_row += 1
 
             for column in range(model.columnCount()):
-                print("ooooo "+str(column))
                 index = model.index(row, column)
                 # We suppose data are strings
                 data[pos-1][column] = str(model.data(index)) 
@@ -782,10 +780,10 @@ class GUI_MainWindow:
 
         allFiles = files_T1 + files_T2
 
-        print(liquidmassfromTable)
-        print(particlemassfromTable)
-        print(allFiles)
-        print(data)
+        # print(liquidmassfromTable)
+        # print(particlemassfromTable)
+        # print(allFiles)
+        # print(data)
         
         if OneRelaxationTime.isChecked() == True and TwoRelaxationTime.isChecked() == False:
             Relaxation = "One"
@@ -800,28 +798,20 @@ class GUI_MainWindow:
             returnValue = msgBox.exec()
             return 0
         
-        if surfaceAreaCalculation_language_english.isChecked() == True and surfaceAreaCalculation_language_german.isChecked() == False:
-            language = "english"
-        elif surfaceAreaCalculation_language_english.isChecked() == False and surfaceAreaCalculation_language_german.isChecked() == True:
-            language = "german"
-        else:
-            msgBox = QtWidgets.QMessageBox()
-            msgBox.setIcon(QtWidgets.QMessageBox.Warning)
-            msgBox.setText("double checked language")
-            msgBox.setWindowTitle("Eisai malakas")
-            msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
-            returnValue = msgBox.exec()
-            return 0
-        
-#        if Relaxation == "One":
-        driver = Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel()
-        #elif Relaxation == "Two":
-         #   driver = Driver_surfaceAreaCalculation_twoRelaxationTimes_createFile
-#        else:
-#           print ("you lost")
-        print("fliepath")
-        print(type(self.referenceFilepath))
-        driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, surfaceAreaCalculation_remarks.toPlainText(), surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), self.numberOfConcentrations_surfaceAreaCalculation, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[1], particlemassfromTable[1], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles)
+        remarks = surfaceAreaCalculation_remarks.toPlainText().split(',')
+        for i in range(1, len(files_T1)):
+            if surfaceAreaCalculation_language_english.isChecked() == True and surfaceAreaCalculation_language_german.isChecked() == False:
+                language = "english"
+            elif surfaceAreaCalculation_language_english.isChecked() == False and surfaceAreaCalculation_language_german.isChecked() == True:
+                language = "german"
+            else:
+                language = "english"
+                driver = Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel()
+                driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, remarks[i-1], surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), self.numberOfConcentrations_surfaceAreaCalculation, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[i], particlemassfromTable[i], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles, i)
+                language = "german"
+
+            driver = Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel()
+            driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, remarks[i-1], surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), self.numberOfConcentrations_surfaceAreaCalculation, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[i], particlemassfromTable[i], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles, i)
 
 
 
