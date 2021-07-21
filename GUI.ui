@@ -10,11 +10,11 @@
     <x>0</x>
     <y>0</y>
     <width>1110</width>
-    <height>651</height>
+    <height>669</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -23,12 +23,6 @@
    <size>
     <width>1110</width>
     <height>420</height>
-   </size>
-  </property>
-  <property name="maximumSize">
-   <size>
-    <width>1110</width>
-    <height>660</height>
    </size>
   </property>
   <property name="font">
@@ -887,7 +881,7 @@
        <rect>
         <x>20</x>
         <y>516</y>
-        <width>261</width>
+        <width>190</width>
         <height>30</height>
        </rect>
       </property>
@@ -900,7 +894,7 @@
        <rect>
         <x>20</x>
         <y>549</y>
-        <width>261</width>
+        <width>190</width>
         <height>30</height>
        </rect>
       </property>
@@ -1072,27 +1066,105 @@
      <widget class="QPushButton" name="pushButton_RemoveSelectedMeasrementFiles">
       <property name="geometry">
        <rect>
-        <x>310</x>
+        <x>220</x>
         <y>516</y>
-        <width>261</width>
+        <width>190</width>
         <height>30</height>
        </rect>
       </property>
       <property name="text">
-       <string>Remove Selected Files</string>
+       <string>Remove selected Files</string>
       </property>
      </widget>
      <widget class="QPlainTextEdit" name="plainTextEdit_RemoveSelectedFilesMeasrementFiles">
       <property name="geometry">
        <rect>
-        <x>310</x>
-        <y>549</y>
-        <width>261</width>
+        <x>221</x>
+        <y>550</y>
+        <width>188</width>
         <height>30</height>
        </rect>
       </property>
       <property name="placeholderText">
-       <string>Files to Remove, e.g.: 2,3,6</string>
+       <string>Remove: e.g.: 2,3,6</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="comboBox_selectWeighInData">
+      <property name="geometry">
+       <rect>
+        <x>468</x>
+        <y>516</y>
+        <width>188</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="editable">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_SetUpdateWeights">
+      <property name="geometry">
+       <rect>
+        <x>467</x>
+        <y>550</y>
+        <width>190</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Set / Update weights</string>
+      </property>
+     </widget>
+     <widget class="Line" name="line">
+      <property name="geometry">
+       <rect>
+        <x>440</x>
+        <y>520</y>
+        <width>3</width>
+        <height>60</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+     <widget class="Line" name="line_3">
+      <property name="geometry">
+       <rect>
+        <x>884</x>
+        <y>520</y>
+        <width>3</width>
+        <height>60</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+     <widget class="QPlainTextEdit" name="plainTextEdit_SetUpdateWeights">
+      <property name="geometry">
+       <rect>
+        <x>665</x>
+        <y>550</y>
+        <width>188</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="placeholderText">
+       <string>Empty = all, e.g: 2,5,8</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_SetUpdateSelectedWeights">
+      <property name="geometry">
+       <rect>
+        <x>664</x>
+        <y>517</y>
+        <width>190</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Update seleceted weights</string>
       </property>
      </widget>
     </widget>
@@ -2364,9 +2436,9 @@
      <widget class="QPushButton" name="pushButton_surfaceAreaCalculation_RemoveSelectedMeasrementFiles">
       <property name="geometry">
        <rect>
-        <x>310</x>
+        <x>219</x>
         <y>504</y>
-        <width>261</width>
+        <width>190</width>
         <height>30</height>
        </rect>
       </property>
@@ -2419,7 +2491,7 @@
        <rect>
         <x>20</x>
         <y>504</y>
-        <width>261</width>
+        <width>190</width>
         <height>30</height>
        </rect>
       </property>
@@ -2432,7 +2504,7 @@
        <rect>
         <x>20</x>
         <y>540</y>
-        <width>261</width>
+        <width>190</width>
         <height>30</height>
        </rect>
       </property>
@@ -2443,21 +2515,21 @@
      <widget class="QPlainTextEdit" name="plainTextEdit_surfaceAreaCalculation_RemoveSelectedFilesMeasrementFiles">
       <property name="geometry">
        <rect>
-        <x>310</x>
+        <x>220</x>
         <y>540</y>
-        <width>261</width>
+        <width>188</width>
         <height>30</height>
        </rect>
       </property>
       <property name="placeholderText">
-       <string>Files to Remove, e.g.: 2,3,6</string>
+       <string>Remove, e.g.: 2,3,6</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButton_surfaceAreaCalculation_run">
       <property name="geometry">
        <rect>
         <x>920</x>
-        <y>504</y>
+        <y>512</y>
         <width>130</width>
         <height>57</height>
        </rect>
@@ -2530,6 +2602,84 @@
       </property>
       <property name="text">
        <string>Add File</string>
+      </property>
+     </widget>
+     <widget class="Line" name="line_6">
+      <property name="geometry">
+       <rect>
+        <x>433</x>
+        <y>510</y>
+        <width>3</width>
+        <height>60</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_surfaceAreaCalculation_SetUpdateSelectedWeights">
+      <property name="geometry">
+       <rect>
+        <x>657</x>
+        <y>507</y>
+        <width>190</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Update seleceted weights</string>
+      </property>
+     </widget>
+     <widget class="QComboBox" name="comboBox_surfaceAreaCalculation_selectWeighInData">
+      <property name="geometry">
+       <rect>
+        <x>461</x>
+        <y>506</y>
+        <width>188</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="editable">
+       <bool>false</bool>
+      </property>
+     </widget>
+     <widget class="QPlainTextEdit" name="plainTextEdit_surfaceAreaCalculation_SetUpdateWeights">
+      <property name="geometry">
+       <rect>
+        <x>658</x>
+        <y>540</y>
+        <width>188</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="placeholderText">
+       <string>Update: e.g: 2,5,8</string>
+      </property>
+     </widget>
+     <widget class="Line" name="line_7">
+      <property name="geometry">
+       <rect>
+        <x>884</x>
+        <y>510</y>
+        <width>3</width>
+        <height>60</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_surfaceAreaCalculation_SetUpdateWeights">
+      <property name="geometry">
+       <rect>
+        <x>460</x>
+        <y>540</y>
+        <width>190</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Set / Update all weights</string>
       </property>
      </widget>
     </widget>
