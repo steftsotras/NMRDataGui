@@ -347,8 +347,8 @@ class GUI_MainWindow:
                 else:
                     return 0
         
-        print(self.groupedT1)
-        print(self.groupedT2)
+        #print(self.groupedT1)
+        #print(self.groupedT2)
 
         #self.CreateTable(self.numberOfConcentrations, self.groupedT1, self.groupedT2)
         model = self.tableModel.AddRows(self.numberOfConcentrations, self.groupedT1, self.groupedT2)
@@ -402,7 +402,7 @@ class GUI_MainWindow:
         #print(dateTime.dateTime().toString(self.ui.dateTimeEdit_dateTime.displayFormat()))
 
         model = self.ui.tableView_mesurementFiles.model()
-        print("aaaa "+str(self.numberOfConcentrations))
+        #print("aaaa "+str(self.numberOfConcentrations))
         data = [[0 for x in range(model.columnCount())] for y in range(self.numberOfConcentrations)]
         
         files_T1 = [[0 for x in range(3)] for y in range(self.numberOfConcentrations)]
@@ -412,14 +412,14 @@ class GUI_MainWindow:
         
         liquidmassfromTable = list()
         particlemassfromTable = list()
-        print(particlemassfromTable)
+        #print(particlemassfromTable)
         group_row = 0
 
         for row in range(model.rowCount()):
             #data.append([])
 
             pos = int(model.data( model.index(row, 5)))
-            print(pos)
+            #print(pos)
             if pos < 1 or pos > self.numberOfConcentrations:
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Warning)
@@ -439,7 +439,7 @@ class GUI_MainWindow:
                 group_row += 1
 
             for column in range(model.columnCount()):
-                print("ooooo "+str(column))
+                #print("ooooo "+str(column))
                 index = model.index(row, column)
                 # We suppose data are strings
                 data[pos-1][column] = str(model.data(index)) 

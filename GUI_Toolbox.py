@@ -7,6 +7,7 @@ import platform
 import xml.etree.ElementTree as ET
 import functools
 import json
+import pandas as pd
 
 from MainWindow import Ui_MainWindow_NMR
 
@@ -49,6 +50,14 @@ class TableModelData():
             item = QtGui.QStandardItem('%.2f -  %.2f - %.2f' % (group2[i][3], group2[i+1][3], group2[i+2][3]) )
             self.model.setItem(row, 2, item) 
 
+            
+            data = self.EinwagenData(group1[i][1].split('-'))
+            #print(data)
+
+            item = QtGui.QStandardItem(str(data[0])[0:6])
+            self.model.setItem(row, 3, item)
+            item = QtGui.QStandardItem(str(data[1])[0:6])
+            self.model.setItem(row, 4, item)
             i+=3
             
             #Position
@@ -56,6 +65,18 @@ class TableModelData():
             self.model.setItem(row, 5, item)
 
         return self.model
+    
+    def EinwagenData(self, remark):
+
+        data = pd.read_excel("Data\\AM_Einwagen.xlsx", sheet_name='AM_#100-#200',header=None)
+        #print(remark[0])
+        for i in range(1,len(data.index)):
+            #print(remark[0])
+            #print(data[0][i])
+            if str(data[0][i]) == str(remark[0]):
+                results = [data[7][i], data[8][i]]
+                return results
+        return [0,1]
 
 
 class NMRData:
