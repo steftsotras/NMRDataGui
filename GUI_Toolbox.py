@@ -33,7 +33,7 @@ class TableModelData():
         for row in range(self.model.rowCount()):
             self.model.removeRow(0)
 
-    def AddRows(self, num, group1, group2):
+    def AddRows(self, num, group1, group2, sheet_name):
         
         i=0
         
@@ -51,7 +51,7 @@ class TableModelData():
             self.model.setItem(row, 2, item) 
 
             
-            data = self.EinwagenData(group1[i][1].split('-'))
+            data = self.NMRWeightData(group1[i][1].split('-'), sheet_name)
             #print(data)
 
             item = QtGui.QStandardItem(str(data[0])[0:6])
@@ -66,9 +66,9 @@ class TableModelData():
 
         return self.model
     
-    def EinwagenData(self, remark):
+    def NMRWeightData(self, remark, sheetname):
 
-        data = pd.read_excel("Data\\AM_Einwagen.xlsx", sheet_name='AM_#100-#200',header=None)
+        data = pd.read_excel("Data\\AM_Einwagen.xlsx", sheet_name=sheetname,header=None)
         #print(remark[0])
         for i in range(1,len(data.index)):
             #print(remark[0])
@@ -76,8 +76,26 @@ class TableModelData():
             if str(data[0][i]) == str(remark[0]):
                 results = [data[7][i], data[8][i]]
                 return results
-        return [0,1]
+        return [1,0]
 
+    def updateWeights(self, sheetname, row):
+        
+        item0 = self.model.item(row,0)
+        item0Text = str(item0.text())    
+        data = self.NMRWeightData(item0Text.split('-'), sheetname)
+        if data != [1,0]:
+            item3 = self.model.item(row,3)
+            item4 = self.model.item(row,4)
+            item3.setText(str(data[0])[0:6])
+            item4.setText(str(data[1])[0:6])
+
+    def updateAllWeights(self, sheetname):
+        for row in range(0, self.model.rowCount()):
+            self.updateWeights(sheetname, row)
+    def updateSelWeights(self, sheetname, selectedRowsUPD):
+        for i in selectedRowsUPD:
+            if(i >= 1 or i <= self.model.rowCount()):
+                self.updateWeights(sheetname, i-1)
 
 class NMRData:
 

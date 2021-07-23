@@ -9,6 +9,7 @@ import platform
 import xml.etree.ElementTree as ET
 import functools
 import json
+from openpyxl import load_workbook
 
 from MainWindow import Ui_MainWindow_NMR
 from GUI_Toolbox import TableModelData
@@ -28,6 +29,7 @@ class GUI_MainWindow:
     
     
     def __init__(self):
+
         self.main_win = QtWidgets.QMainWindow()
         self.ui = Ui_MainWindow_NMR()
         self.ui.setupUi(self.main_win)
@@ -37,6 +39,8 @@ class GUI_MainWindow:
         material_bulk_file = open('Data/material_bulk_database.json', 'r')
         self.material_bulk_data = json.loads(material_bulk_file.read())
         material_bulk_file.close()
+
+        self.NMR_weightsFile = 'Data\\AM_Einwagen.xlsx'
 
         self.nmrDataTools = NMRData()
         
@@ -71,6 +75,8 @@ class GUI_MainWindow:
         self.remarks = self.ui.plainTextEdit_remarks
         self.surfaceArea_Argon = self.ui.plainTextEdit_surfaceArea_Argon
         self.temperature = self.ui.plainTextEdit_temperature
+
+
 
         self.user.setPlainText("Alexander Michalowski")
         #bulkName.addItems(["Milipore-Wasser_LFG", "Milipore-Wasser"])
@@ -107,6 +113,10 @@ class GUI_MainWindow:
         self.comboBulk = self.ui.comboBox_bulkName
         self.comboBulk.currentTextChanged.connect(self.setBulkProperties)
 
+        self.comboWeights = self.ui.comboBox_selectWeighInData
+        self.comboWeights_surfaceAreaCalculation = self.ui.comboBox_surfaceAreaCalculation_selectWeighInData
+        self.SheetComboLoad()
+
         
         #ADD - DELETE MAT/BULK BUTTONS
         
@@ -123,6 +133,13 @@ class GUI_MainWindow:
         self.removeBulk_btn.clicked.connect(lambda:self.removeBulkData(self.ui.comboBox_bulkName.currentText()))
 
         self.tableModel = TableModelData()
+
+        self.updateWeights_btn = self.ui.pushButton_SetUpdateWeights
+        self.updateWeights_btn.clicked.connect(self.updateWeights)
+
+        self.updateSelWeights_btn = self.ui.pushButton_SetUpdateSelectedWeights
+        self.updateSelWeights_btn.clicked.connect(self.updateSelWeights)
+        
 
 
     def addMaterialData(self, materialName, surfaceAreaArgon, particleDensity):
@@ -284,9 +301,27 @@ class GUI_MainWindow:
 
 
     
-            
-        
-    
+    def SheetComboLoad(self):
+
+        wb = load_workbook(self.NMR_weightsFile, read_only=True, keep_links=False)
+        sheet_names = []
+        for sheet_name in wb.sheetnames:
+            sheet_names.append(sheet_name)
+        self.comboWeights.addItems(sheet_names)
+        self.comboWeights_surfaceAreaCalculation.addItems(sheet_names)   
+
+
+    def updateWeights(self):
+        self.tableModel.updateAllWeights(self.comboWeights.currentText())
+    def updateSelWeights(self):
+
+        #fetch selected
+        plainText_selectedWeights = self.ui.plainTextEdit_SetUpdateWeights
+        selectedRowsUPD = plainText_selectedWeights.toPlainText().split(",")
+
+        selectedRowsUPD = [int(i) for i in selectedRowsUPD]
+
+        self.tableModel.updateSelWeights(self.comboWeights.currentText(), selectedRowsUPD)
         
     def removeSelFiles(self):
 
@@ -351,15 +386,16 @@ class GUI_MainWindow:
         #print(self.groupedT2)
 
         #self.CreateTable(self.numberOfConcentrations, self.groupedT1, self.groupedT2)
-        model = self.tableModel.AddRows(self.numberOfConcentrations, self.groupedT1, self.groupedT2)
+
+        sheetname = self.comboWeights.currentText()
+
+        model = self.tableModel.AddRows(self.numberOfConcentrations, self.groupedT1, self.groupedT2, sheetname)
         
         table = self.ui.tableView_mesurementFiles
         table.setModel(model)
         table.horizontalHeader().resizeSection(0, 330)
         table.resizeColumnsToContents()    
 
-
-    
 
 
     #ADD REMOVE FILES LOGIC
@@ -543,7 +579,6 @@ class GUI_MainWindow:
         self.comboBulk_surfaceAreaCalculation = self.ui.comboBox_surfaceAreaCalculation_bulkName
         self.comboBulk_surfaceAreaCalculation.currentTextChanged.connect(self.setBulkProperties_surfaceAreaCalculation)
 
-        
         #ADD - DELETE MAT/BULK BUTTONS
         
         self.addMaterial_btn_surfaceAreaCalculation = self.ui.pushButton_surfaceAreaCalculation_AddMaterial
@@ -682,7 +717,9 @@ class GUI_MainWindow:
                     return 0
 
         #self.CreateTable(self.numberOfConcentrations, self.groupedT1, self.groupedT2)
-        model = self.tableModel_surfaceAreaCalculation.AddRows(self.numberOfConcentrations_surfaceAreaCalculation, self.groupedT1_surfaceAreaCalculation, self.groupedT2_surfaceAreaCalculation)
+        sheetname = self.comboWeights_surfaceAreaCalculation.currentText()
+
+        model = self.tableModel_surfaceAreaCalculation.AddRows(self.numberOfConcentrations_surfaceAreaCalculation, self.groupedT1_surfaceAreaCalculation, self.groupedT2_surfaceAreaCalculation,sheetname)
         
         table = self.ui.tableView_surfaceAreaCalculation_mesurementFiles
         table.setModel(model)
