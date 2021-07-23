@@ -68,7 +68,7 @@ class TableModelData():
     
     def NMRWeightData(self, remark, sheetname):
 
-        data = pd.read_excel("Data\\AM_Einwagen.xlsx", sheet_name=sheetname,header=None)
+        data = pd.read_excel("Data\\NMR_weights.xlsx", sheet_name=sheetname,header=None)
         #print(remark[0])
         for i in range(1,len(data.index)):
             #print(remark[0])

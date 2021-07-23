@@ -40,7 +40,7 @@ class GUI_MainWindow:
         self.material_bulk_data = json.loads(material_bulk_file.read())
         material_bulk_file.close()
 
-        self.NMR_weightsFile = 'Data\\AM_Einwagen.xlsx'
+        self.NMR_weightsFile = 'Data\\NMR_weights.xlsx'
 
         self.nmrDataTools = NMRData()
         
