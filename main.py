@@ -603,6 +603,11 @@ class GUI_MainWindow:
         
         self.tableReferenceMesurementFiles = self.ui.tableView_surfaceAreaCalculation_ReferenceMesurementFiles
 
+        self.updateWeights_btn_surfaceAreaCalculation = self.ui.pushButton_surfaceAreaCalculation_SetUpdateWeights
+        self.updateWeights_btn_surfaceAreaCalculation.clicked.connect(self.updateWeights_surfaceAreaCalculation)
+
+        self.updateSelWeights_btn_surfaceAreaCalculation = self.ui.pushButton_surfaceAreaCalculation_SetUpdateSelectedWeights
+        self.updateSelWeights_btn_surfaceAreaCalculation.clicked.connect(self.updateSelWeights_surfaceAreaCalculation)
 
     def addReferenceMeasrementFiles(self):
         textForOpeningFiles = "Please select Files for Concentration"
@@ -668,6 +673,18 @@ class GUI_MainWindow:
 
         self.tableModel_surfaceAreaCalculation.DelRows(selectedRowsDEL)
         
+    def updateWeights_surfaceAreaCalculation(self):
+        self.tableModel_surfaceAreaCalculation.updateAllWeights(self.comboWeights_surfaceAreaCalculation.currentText())
+    def updateSelWeights_surfaceAreaCalculation(self):
+
+        #fetch selected
+        plainText_selectedWeights = self.ui.plainTextEdit_surfaceAreaCalculation_SetUpdateWeights
+        selectedRowsUPD = plainText_selectedWeights.toPlainText().split(",")
+
+        selectedRowsUPD = [int(i) for i in selectedRowsUPD]
+
+        self.tableModel_surfaceAreaCalculation.updateSelWeights(self.comboWeights_surfaceAreaCalculation.currentText(), selectedRowsUPD)
+    
     #Grouping Files to cook them up for the script
     def groupFiles_surfaceAreaCalculation(self, files):
 
