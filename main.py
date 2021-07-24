@@ -526,6 +526,36 @@ class GUI_MainWindow:
     #************************************************************************#
 
 
+    def ComperisonPlots(self):
+
+        self.ui.checkBox_comperisonPlots_language_german
+        self.ui.checkBox_comperisonPlots_language_english
+
+        self.ui.checkBox_comperisonPlots_T1
+        self.ui.checkBox_comperisonPlots_T2
+
+        self.ui.plainTextEdit_T1_PlotName
+        self.ui.plainTextEdit_comperisonPlots_comperisonPlots_T1PlotName
+        
+        self.ui.plainTextEdit_comperisonPlots_T1_calculationOfVolumeFraction
+        self.ui.plainTextEdit_comperisonPlots_T2_calculationOfVolumeFraction
+
+        self.ui.pushButton_comperisonPlots_AddReferenceReferenceMesurementFiles
+        self.ui.pushButton_comperisonPlots_RemoveAllReferenceMesurementFiles
+        self.ui.pushButton_comperisonPlots_RemoveSelectedReferenceMeasrementFiles
+
+        self.ui.plainTextEdit_comperisonPlots_RemoveSelectedFilesReferenceMeasrementFiles
+
+        self.ui.tableView_comperisonPlots_referenceMeasurementFiles
+
+
+
+
+    #************************************************************************#
+    ######################    TAB 3    #######################################
+    #************************************************************************#
+
+
     def SurfaceAreaCalculation(self):
         
         #GUI Variables
