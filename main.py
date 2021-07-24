@@ -13,6 +13,7 @@ from openpyxl import load_workbook
 
 from MainWindow import Ui_MainWindow_NMR
 from GUI_Toolbox import TableModelData
+from GUI_Toolbox import ComparisonTableModelData
 from GUI_Toolbox import NMRData
 from Driver_referenceMeasurement_createFile_importExcel import Driver_referenceMeasurement_createFile_importExcel
 from Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel import Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel
@@ -45,6 +46,7 @@ class GUI_MainWindow:
         self.nmrDataTools = NMRData()
         
         self.CalibrationLine_AcomArea()
+        self.ComperisonPlots()
         self.SurfaceAreaCalculation()
 
 
@@ -139,7 +141,7 @@ class GUI_MainWindow:
 
         self.updateSelWeights_btn = self.ui.pushButton_SetUpdateSelectedWeights
         self.updateSelWeights_btn.clicked.connect(self.updateSelWeights)
-        
+
 
 
     def addMaterialData(self, materialName, surfaceAreaArgon, particleDensity):
@@ -330,7 +332,6 @@ class GUI_MainWindow:
         selectedRowsDEL = plainText_selectedFiles.toPlainText().split(",")
 
         selectedRowsDEL = [int(i) for i in selectedRowsDEL]
-        
 
         self.tableModel.DelRows(selectedRowsDEL)
         
@@ -347,19 +348,20 @@ class GUI_MainWindow:
 
         #print(fileInfo)
         #Update UI
+        groupedT1 = list()
+        groupedT2 = list()
 
         #create groupedfiles for script input
         fileInfo.sort(key=lambda x: x[1])
         groupedBySampleName = functools.reduce(lambda l, x: (l.append([x]) if l[-1][0][1] != x[1] else l[-1].append(x)) or l, fileInfo[1:], [[fileInfo[0]]]) if fileInfo else []
         
-        self.numberOfConcentrations = 0
+        numberOfConcentrations = 0
 
-        self.groupedT1 = list()
-        self.groupedT2 = list()
+        
 
         for groupRow in groupedBySampleName:
 
-            self.numberOfConcentrations += 1
+            numberOfConcentrations += 1
             #print("GROUP")    
             #print(groupRow)
 
@@ -376,20 +378,20 @@ class GUI_MainWindow:
             for groupT in groupRow:
 
                 if str(groupT[0]) == "T2A":
-                    self.groupedT2.append(groupT)
+                    groupedT2.append(groupT)
                 elif str(groupT[0]) == "T1":
-                    self.groupedT1.append(groupT)
+                    groupedT1.append(groupT)
                 else:
                     return 0
         
-        #print(self.groupedT1)
-        #print(self.groupedT2)
+        #print(groupedT1)
+        #print(groupedT2)
 
         #self.CreateTable(self.numberOfConcentrations, self.groupedT1, self.groupedT2)
 
         sheetname = self.comboWeights.currentText()
 
-        model = self.tableModel.AddRows(self.numberOfConcentrations, self.groupedT1, self.groupedT2, sheetname)
+        model = self.tableModel.AddRows(numberOfConcentrations, groupedT1, groupedT2, sheetname)
         
         table = self.ui.tableView_mesurementFiles
         table.setModel(model)
@@ -405,15 +407,13 @@ class GUI_MainWindow:
         if files:
             #print(files)
             self.groupFiles(files)
-            
-
-
         else:
             #print("exit")
             pass
         
     def removeFiles(self):
         self.tableModel.RemoveAllRows()
+        
 
     
 
@@ -438,13 +438,22 @@ class GUI_MainWindow:
         #print(dateTime.dateTime().toString(self.ui.dateTimeEdit_dateTime.displayFormat()))
 
         model = self.ui.tableView_mesurementFiles.model()
-        #print("aaaa "+str(self.numberOfConcentrations))
-        data = [[0 for x in range(model.columnCount())] for y in range(self.numberOfConcentrations)]
+
+        groupedT1 = self.tableModel.getGroupedT1()
+        groupedT2 = self.tableModel.getGroupedT2()
+        numOfConcentrations = self.tableModel.getNumOfConcentrations()
+
+        print(groupedT1)
+        print(groupedT2)
+        print(type(numOfConcentrations))
+        print(model.rowCount())
+
+        data = [[0 for x in range(model.columnCount())] for y in range(model.rowCount())]
         
-        files_T1 = [[0 for x in range(3)] for y in range(self.numberOfConcentrations)]
-        files_T2 = [[0 for x in range(3)] for y in range(self.numberOfConcentrations)]
-        filespath_T1 = [[0 for x in range(3)] for y in range(self.numberOfConcentrations)]
-        filespath_T2 = [[0 for x in range(3)] for y in range(self.numberOfConcentrations)]
+        files_T1 = [[0 for x in range(3)] for y in range(model.rowCount())]
+        files_T2 = [[0 for x in range(3)] for y in range(model.rowCount())]
+        filespath_T1 = [[0 for x in range(3)] for y in range(model.rowCount())]
+        filespath_T2 = [[0 for x in range(3)] for y in range(model.rowCount())]
         
         liquidmassfromTable = list()
         particlemassfromTable = list()
@@ -455,8 +464,8 @@ class GUI_MainWindow:
             #data.append([])
 
             pos = int(model.data( model.index(row, 5)))
-            #print(pos)
-            if pos < 1 or pos > self.numberOfConcentrations:
+            print(pos)
+            if pos < 1 or pos > model.rowCount():
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Warning)
                 msgBox.setText("Wrong position given")
@@ -468,10 +477,10 @@ class GUI_MainWindow:
             #Populate filenames in the correct order
             
             for i in range(3):
-                files_T1[pos-1][i] = self.groupedT1[group_row][2]
-                files_T2[pos-1][i] = self.groupedT2[group_row][2]
-                filespath_T1[pos-1][i] = self.groupedT1[group_row][4]
-                filespath_T2[pos-1][i] = self.groupedT2[group_row][4]
+                files_T1[pos-1][i] = groupedT1[group_row][2]
+                files_T2[pos-1][i] = groupedT2[group_row][2]
+                filespath_T1[pos-1][i] = groupedT1[group_row][4]
+                filespath_T2[pos-1][i] = groupedT2[group_row][4]
                 group_row += 1
 
             for column in range(model.columnCount()):
@@ -480,17 +489,19 @@ class GUI_MainWindow:
                 # We suppose data are strings
                 data[pos-1][column] = str(model.data(index)) 
 
-        for j in range(self.numberOfConcentrations) :
+        for j in range(model.rowCount()) :
             liquidmassfromTable.append(float(data[j][3]))
             particlemassfromTable.append(float(data[j][4]))
 
 
         allFiles = files_T1 + files_T2
 
-        print(liquidmassfromTable)
-        print(particlemassfromTable)
+        #print(liquidmassfromTable)
+        #print(particlemassfromTable)
         print(allFiles)
-        print(data)
+        print(filespath_T1)
+        print(filespath_T2)
+        #print(data)
         
         if evaluation_single.isChecked() == True and evaluation_double.isChecked() == False:
             evaluation = "single"
@@ -512,11 +523,11 @@ class GUI_MainWindow:
         else:
             language = "english"
             driver = Driver_referenceMeasurement_createFile_importExcel()
-            driver.runDriver(materialName.currentText(), evaluation, bulkName.currentText(), user.toPlainText(), language, remarks.toPlainText(), temperature.toPlainText(), float(surfaceArea_Argon.toPlainText()), float(densityBulk.toPlainText()), float(particleDensity.toPlainText()), dateTime.dateTime().toString("yyyyMMdd"), self.numberOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable, particlemassfromTable )
+            driver.runDriver(materialName.currentText(), evaluation, bulkName.currentText(), user.toPlainText(), language, remarks.toPlainText(), temperature.toPlainText(), float(surfaceArea_Argon.toPlainText()), float(densityBulk.toPlainText()), float(particleDensity.toPlainText()), dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable, particlemassfromTable )
             language = "german"
 
         driver = Driver_referenceMeasurement_createFile_importExcel()
-        driver.runDriver(materialName.currentText(), evaluation, bulkName.currentText(), user.toPlainText(), language, remarks.toPlainText(), temperature.toPlainText(), float(surfaceArea_Argon.toPlainText()), float(densityBulk.toPlainText()), float(particleDensity.toPlainText()), dateTime.dateTime().toString("yyyyMMdd"), self.numberOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable, particlemassfromTable )
+        driver.runDriver(materialName.currentText(), evaluation, bulkName.currentText(), user.toPlainText(), language, remarks.toPlainText(), temperature.toPlainText(), float(surfaceArea_Argon.toPlainText()), float(densityBulk.toPlainText()), float(particleDensity.toPlainText()), dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable, particlemassfromTable )
         
 
     
@@ -528,26 +539,150 @@ class GUI_MainWindow:
 
     def ComperisonPlots(self):
 
-        self.ui.checkBox_comperisonPlots_language_german
-        self.ui.checkBox_comperisonPlots_language_english
+        self.comperisonPlots_language_german = self.ui.checkBox_comperisonPlots_language_german
+        self.comperisonPlots_language_english = self.ui.checkBox_comperisonPlots_language_english
 
-        self.ui.checkBox_comperisonPlots_T1
-        self.ui.checkBox_comperisonPlots_T2
+        self.comperisonPlots_T1 = self.ui.checkBox_comperisonPlots_T1
+        self.comperisonPlots_T2 = self.ui.checkBox_comperisonPlots_T2
 
-        self.ui.plainTextEdit_T1_PlotName
-        self.ui.plainTextEdit_comperisonPlots_comperisonPlots_T1PlotName
+        self.comperisonPlots_T1_PlotName = self.ui.plainTextEdit_comperisonPlots_T1_PlotName
+        self.comperisonPlots_T2_PlotName = self.ui.plainTextEdit_comperisonPlots_T2_PlotName
+
+        self.comperisonPlots_T1_PlotName.setPlainText('Sample T1')
+        self.comperisonPlots_T2_PlotName.setPlainText('Sample T2')
         
-        self.ui.plainTextEdit_comperisonPlots_T1_calculationOfVolumeFraction
-        self.ui.plainTextEdit_comperisonPlots_T2_calculationOfVolumeFraction
+        self.comperisonPlots_T1_calculationOfVolumeFraction = self.ui.plainTextEdit_comperisonPlots_T1_calculationOfVolumeFraction
+        self.comperisonPlots_T2_calculationOfVolumeFraction = self.ui.plainTextEdit_comperisonPlots_T2_calculationOfVolumeFraction
+
+        self.comperisonPlots_T1_calculationOfVolumeFraction.setPlainText('mass')
+        self.comperisonPlots_T2_calculationOfVolumeFraction.setPlainText('mass')
 
         self.ui.pushButton_comperisonPlots_AddReferenceReferenceMesurementFiles
         self.ui.pushButton_comperisonPlots_RemoveAllReferenceMesurementFiles
         self.ui.pushButton_comperisonPlots_RemoveSelectedReferenceMeasrementFiles
 
-        self.ui.plainTextEdit_comperisonPlots_RemoveSelectedFilesReferenceMeasrementFiles
+        self.run_btn_comperisonPlots = self.ui.pushButton_ComerisonPlots_run
+        self.run_btn_comperisonPlots.clicked.connect(self.fetch_input_comperisonPlots)
 
-        self.ui.tableView_comperisonPlots_referenceMeasurementFiles
 
+        #ADD - DELETE FILES BUTTONS
+        self.add_btn_comperisonPlots = self.ui.pushButton_comperisonPlots_AddReferenceReferenceMesurementFiles
+        self.add_btn_comperisonPlots.clicked.connect(self.addFiles_comperisonPlots)
+
+        self.remove_btn_comperisonPlots = self.ui.pushButton_comperisonPlots_RemoveAllReferenceMesurementFiles
+        self.remove_btn_comperisonPlots.clicked.connect(self.removeFiles_comperisonPlots)
+        
+        self.removeSel_btn_comperisonPlots = self.ui.pushButton_comperisonPlots_RemoveSelectedReferenceMeasrementFiles
+        self.removeSel_btn_comperisonPlots.clicked.connect(self.removeSelFiles_comperisonPlots)
+
+
+        self.comperisonPlots_RemoveSelectedFilesReferenceMeasrementFiles = self.ui.plainTextEdit_comperisonPlots_RemoveSelectedFilesReferenceMeasrementFiles
+
+        self.tableView_comperisonPlots = self.ui.tableView_comperisonPlots_referenceMeasurementFiles
+
+        self.tableModel_comperisonPlots = ComparisonTableModelData()
+
+    def addFiles_comperisonPlots(self):
+
+        textForOpeningFiles = "Please select Files for Comparison"
+        files = fileopenbox(textForOpeningFiles, "Dunno", default = "", filetypes= "*.txt", multiple=True)
+        if files:
+            filepaths = []
+            for file in files:
+                filepaths.append(file.replace('\\','\\\\'))
+
+            model = self.tableModel_comperisonPlots.AddRows(filepaths)
+
+            self.tableView_comperisonPlots.setModel(model)
+            self.tableView_comperisonPlots.horizontalHeader().resizeSection(0, 330)
+            self.tableView_comperisonPlots.resizeColumnsToContents() 
+
+        else:
+            pass
+    
+    def removeFiles_comperisonPlots(self):
+        self.tableModel_comperisonPlots.RemoveAllRows()
+
+    def removeSelFiles_comperisonPlots(self):
+
+        #fetch selected
+        selectedRowsDEL =  self.comperisonPlots_RemoveSelectedFilesReferenceMeasrementFiles.toPlainText().split(",")
+
+        selectedRowsDEL = [int(i) for i in selectedRowsDEL]
+        
+
+        self.tableModel_comperisonPlots.DelRows(selectedRowsDEL)
+        
+    # def removeReferenceMesurementFile(self):
+    #     self.modelReference.removeRow(0)
+
+    def fetch_input_comperisonPlots(self):
+        
+
+        data = [[0 for x in range(self.tableModel_comperisonPlots.columnCount())] for y in range(self.tableModel_comperisonPlots.rowCount())]
+        files = [0 for x in range(self.tableModel_comperisonPlots.rowCount())]
+        files_T2 = [0 for x in range(self.tableModel_comperisonPlots.rowCount())]
+
+        #fetch table
+        for row in range(self.tableModel_comperisonPlots.rowCount()):
+
+            pos = int(self.tableModel_comperisonPlots.data( self.tableModel_comperisonPlots.index(row, 2)))
+
+            if pos < 1 or pos > self.tableModel_comperisonPlots.rowCount():
+                msgBox = QtWidgets.QMessageBox()
+                msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+                msgBox.setText("Wrong position given")
+                msgBox.setWindowTitle("Eisai malakas")
+                msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                returnValue = msgBox.exec()
+                return 0
+
+            for column in range(self.tableModel_comperisonPlots.columnCount()):
+                #print("ooooo "+str(column))
+                index = self.tableModel_comperisonPlots.index(row, column)
+                # We suppose data are strings
+                data[pos-1][column] = str(self.tableModel_comperisonPlots.data(index))
+
+
+
+
+        PlotName = []
+        PlotName.append(self.comperisonPlots_T1_PlotName.toPlainText())
+        PlotName.append(self.comperisonPlots_T2_PlotName.toPlainText())
+
+        VolumeFraction = []
+        VolumeFraction.append(self.comperisonPlots_T1_calculationOfVolumeFraction.toPlainText())
+        VolumeFraction.append(self.comperisonPlots_T2_calculationOfVolumeFraction.toPlainText())
+
+        #T1 - T2 CheckBox
+        if self.comperisonPlots_T1.isChecked() == True and self.comperisonPlots_T2.isChecked() == False:
+            T1_T2 = "T1"
+        elif self.comperisonPlots_T2.isChecked() == False and self.comperisonPlots_T1.isChecked() == True:
+            T1_T2 = "T2"
+        elif self.comperisonPlots_T2.isChecked() == True and self.comperisonPlots_T1.isChecked() == True:
+            T1_T2 = "both"
+        else:
+            msgBox = QtWidgets.QMessageBox()
+            msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+            msgBox.setText("Check evalutation T1, T2 or both")
+            msgBox.setWindowTitle("Eisai malakas")
+            msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            returnValue = msgBox.exec()
+            return 0
+
+        #Language CheckBox
+        if self.comperisonPlots_language_english.isChecked() == True and self.comperisonPlots_language_german.isChecked() == False:
+            language = "english"
+        elif self.comperisonPlots_language_english.isChecked() == False and self.comperisonPlots_language_german.isChecked() == True:
+            language = "german"
+        else:
+            language = "english"
+            #driver = Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel()
+            #driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, remarks[i-1], surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), self.numberOfConcentrations_surfaceAreaCalculation, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[i], particlemassfromTable[i], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles, i)
+            language = "german"
+
+        # driver = Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel()
+        # driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, remarks[i-1], surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), self.numberOfConcentrations_surfaceAreaCalculation, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[i], particlemassfromTable[i], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles, i)
 
 
 
@@ -638,6 +773,9 @@ class GUI_MainWindow:
 
         self.updateSelWeights_btn_surfaceAreaCalculation = self.ui.pushButton_surfaceAreaCalculation_SetUpdateSelectedWeights
         self.updateSelWeights_btn_surfaceAreaCalculation.clicked.connect(self.updateSelWeights_surfaceAreaCalculation)
+
+        self.groupedT1_surfaceAreaCalculation = list()
+        self.groupedT2_surfaceAreaCalculation = list()
 
     def addReferenceMeasrementFiles(self):
         textForOpeningFiles = "Please select Files for Concentration"
@@ -735,8 +873,7 @@ class GUI_MainWindow:
         
         self.numberOfConcentrations_surfaceAreaCalculation = 0
 
-        self.groupedT1_surfaceAreaCalculation = list()
-        self.groupedT2_surfaceAreaCalculation = list()
+        
 
         for groupRow in groupedBySampleName:
 
