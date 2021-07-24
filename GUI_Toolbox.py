@@ -38,13 +38,11 @@ class TableModelData():
                 self.model.removeRow(i-1)
                 
                 j = (i-1)*3
-                self.groupedT1[j].pop()
-                self.groupedT1[j+1].pop()
-                self.groupedT1[j+2].pop()
-
-                self.groupedT2[j].pop()
-                self.groupedT2[j+1].pop()
-                self.groupedT2[j+2].pop()
+                for k in range(3):
+                    self.groupedT1.pop(j)
+                    self.groupedT2.pop(j)
+                
+                
 
                 self.numberOfConcentrations -= 1
             
