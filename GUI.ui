@@ -61,7 +61,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Test&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="Tab_referenceMesurement">
      <attribute name="title">
@@ -1222,7 +1222,7 @@
         <bool>true</bool>
        </property>
       </widget>
-      <widget class="QPlainTextEdit" name="plainTextEdit_comperisonPlots_comperisonPlots_T1PlotName">
+      <widget class="QPlainTextEdit" name="plainTextEdit_comperisonPlots_T1_PlotName">
        <property name="geometry">
         <rect>
          <x>350</x>
@@ -1258,7 +1258,7 @@
         <enum>Qt::Vertical</enum>
        </property>
       </widget>
-      <widget class="QPlainTextEdit" name="plainTextEdit_T1_PlotName">
+      <widget class="QPlainTextEdit" name="plainTextEdit_comperisonPlots_T2_PlotName">
        <property name="geometry">
         <rect>
          <x>350</x>
