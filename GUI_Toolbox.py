@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 import functools
 import json
 import pandas as pd
+import re
 
 from MainWindow import Ui_MainWindow_NMR
 
@@ -81,8 +82,15 @@ class TableModelData():
             item = QtGui.QStandardItem('%.2f -  %.2f - %.2f' % (group2[i][3], group2[i+1][3], group2[i+2][3]) )
             self.model.setItem(row, 2, item) 
 
-            
-            data = self.NMRWeightData(group1[i][1].split('-'), sheet_name)
+            sample_name = group1[i][1]
+            match = re.match('#([0-9]\.*)*', sample_name)
+
+            if match is not None:
+                remark = match[0]
+            else:
+                remark = ''
+
+            data = self.NMRWeightData(remark, sheet_name)
             #print(data)
 
             item = QtGui.QStandardItem(str(data[0])[0:6])
@@ -104,7 +112,7 @@ class TableModelData():
         for i in range(1,len(data.index)):
             #print(remark[0])
             #print(data[0][i])
-            if str(data[0][i]) == str(remark[0]):
+            if str(data[0][i]) == remark:
                 results = [data[7][i], data[8][i]]
                 return results
         return [1,0]
@@ -112,8 +120,17 @@ class TableModelData():
     def updateWeights(self, sheetname, row):
         
         item0 = self.model.item(row,0)
-        item0Text = str(item0.text())    
-        data = self.NMRWeightData(item0Text.split('-'), sheetname)
+        item0Text = str(item0.text())   
+
+        sample_name = item0Text
+        match = re.match('#([0-9]\.*)*', sample_name)
+
+        if match is not None:
+            remark = match[0]
+        else:
+            remark = ''
+
+        data = self.NMRWeightData(remark, sheetname)
         if data != [1,0]:
             item3 = self.model.item(row,3)
             item4 = self.model.item(row,4)
