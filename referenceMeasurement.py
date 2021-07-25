@@ -179,15 +179,15 @@ class referenceMeasurement(NMR):
             # Check if volume ratio or mass ratio was used for calculation of surface relaxivity and create x-label
             if evaluation == 'single':
                 if language=='english':
-                    plt.xlabel(r'$V_P \cdot V_L^{-1} \cdot A$ / $\mathrm{m}^\mathrm{2} \mathrm{g}^\mathrm{-1}$')
+                    plt.xlabel(r'$\Psi_P \cdot \mathrm{S}$ / $\mathrm{m}^\mathrm{2} \mathrm{g}^\mathrm{-1}$')
                 elif language=='german':
                     plt.xlabel(r'$\Psi_P \cdot \mathrm{S}$ / $\mathrm{m}^\mathrm{2} \mathrm{g}^\mathrm{-1}$')
             else:
                 if language=='english':
-                    plt.xlabel(r'$V_P \cdot V_L^{-1}$ / $\mathrm{m}^\mathrm{2} \mathrm{g}^\mathrm{-1}$')
+                    plt.xlabel(r'$\Psi_P \cdot \mathrm{S}$ / $\mathrm{m}^\mathrm{2} \mathrm{g}^\mathrm{-1}$')
                 elif language=='german':
-                    plt.xlabel(r'$\Psi_P$ / $\mathrm{m}^\mathrm{2} \mathrm{g}^\mathrm{-1}$')
-                
+                    plt.xlabel(r'$\Psi_P \cdot \mathrm{S}$ / $\mathrm{m}^\mathrm{2} \mathrm{g}^\mathrm{-1}$')
+                    
             
             # Check if calibration is for T1 or T2
             if language=='english':
@@ -249,9 +249,9 @@ class referenceMeasurement(NMR):
             
             # Check if volume ratio or mass ratio was used for calculation of surface relaxivity and create x-label
             if language=='english':
-                plt.xlabel(r'$V_P \cdot V_L^{-1}$ / $\mathrm{m}^\mathrm{2} \mathrm{g}^\mathrm{-1}$')
+                plt.xlabel(r'$\Psi_P \cdot \mathrm{S}$ / $\mathrm{m}^\mathrm{2} \mathrm{g}^\mathrm{-1}$')
             elif language=='german':
-                plt.xlabel(r'$\Psi_P$ / $\mathrm{m}^\mathrm{2} \mathrm{g}^\mathrm{-1}$')
+                plt.xlabel(r'$\Psi_P \cdot \mathrm{S}$ / $\mathrm{m}^\mathrm{2} \mathrm{g}^\mathrm{-1}$')
         
             
             # Check if calibration is for T1 or T2
