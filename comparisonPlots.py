@@ -105,7 +105,7 @@ class comparisonPlots():
         
         plt.savefig('../CalibrationPlots/' + figureName + '.png',dpi=500)
         # matplotlib2tikz.save('../CalibrationPlots/' + figureName +'.tex',encoding="utf-8")
-        plt.show()
+        #plt.show()
     
     
     def plotVolumeRateVsRelaxationRate(self,T1_T2,calculationOfVolumeFraction,legend,figureName=[],language = 'german'):

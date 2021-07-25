@@ -128,10 +128,24 @@ class TableModelData():
             if(i >= 1 or i <= self.model.rowCount()):
                 self.updateWeights(sheetname, i-1)
 
+
+
+
+
+
 class ComparisonTableModelData():
+
     def __init__(self):
         self.model = QtGui.QStandardItemModel(0,3)
         self.model.setHorizontalHeaderLabels(('File Name','Legend','Position'))
+
+        self.numberOfRelaxativityFiles = 0
+        self.RelaxativityFiles = list()
+
+    def getRelaxativityFiles(self):
+        return self.RelaxativityFiles
+    def getNumOfRelaxativityFiles(self):
+        return self.numberOfRelaxativityFiles
 
     def DelRows(self, selectedRowsDEL):
         
@@ -140,8 +154,13 @@ class ComparisonTableModelData():
         for i in selectedRowsDEL:
             if(i >= 1 or i <= self.model.rowCount()):
                 self.model.removeRow(i-1)
+
+                self.RelaxativityFiles.pop(i-1)
+                self.numberOfRelaxativityFiles -= 1
             
     def RemoveAllRows(self):
+        self.numberOfRelaxativityFiles = 0
+        self.RelaxativityFiles = list()
         for row in range(self.model.rowCount()):
             self.model.removeRow(0)
 
@@ -150,7 +169,11 @@ class ComparisonTableModelData():
         i=0
         
         for row in range(self.model.rowCount(), self.model.rowCount() + len(files)):
-        
+            
+            
+            self.RelaxativityFiles.append(files[i])
+            self.numberOfRelaxativityFiles += 1
+
             self.model.insertRow(self.model.rowCount())
             
             temp = files[i].split('\\')
@@ -175,6 +198,8 @@ class ComparisonTableModelData():
 
         return data[1][0]
     
+
+
 
 class NMRData:
 

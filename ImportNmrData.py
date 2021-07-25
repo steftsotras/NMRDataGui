@@ -155,7 +155,7 @@ class NmrToolbox():
         for f in files:
             
                 
-            allFiles.append(f)
+            allFiles.append(filespath[i])
             
             relaxationTimes = list()
             magnetization = list()

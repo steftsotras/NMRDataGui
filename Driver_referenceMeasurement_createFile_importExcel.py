@@ -113,6 +113,8 @@ class Driver_referenceMeasurement_createFile_importExcel:
 
         # Create object 'ref' of class referenceMeasurement with properties materialName and bulkName
         ref = refe.referenceMeasurement(materialName, bulkName) 
+
+        ref.MakeDirectory()
         ref.setDate(date)
         ref.setTemperature(temperature)
         ref.setUser(user)

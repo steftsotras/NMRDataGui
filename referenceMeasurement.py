@@ -27,12 +27,17 @@ class referenceMeasurement(NMR):
         def __init__(self,materialName=[],bulk=[],surfaceArea_Argon=[],temperature=[],date=[],weightFraction=[],densityBulk=[],densityParticle=[],relaxivityFileName=[],particleMass=[],liquidMass=[]):
             NMR.__init__(self,materialName,bulk,surfaceArea_Argon,temperature,date,weightFraction,densityBulk,densityParticle,relaxivityFileName)   
 
-            directory = os.path.dirname('../surfaceRelaxivity/' + self.bulk+'/')
-            if not os.path.exists(directory):
-                os.makedirs(directory) 
+
+
+             
             
         
-            
+        def MakeDirectory(self):
+            directory = os.path.dirname('../surfaceRelaxivity/' + self.bulk+'/')
+            if not os.path.exists(directory):
+                os.makedirs(directory)
+
+         
         def calculateVolumeFractionFromMagnetization(self,T1_T2='T2'):
             # Create first entry for pure bulk
             initialMagnetizationSuspensionList =[]

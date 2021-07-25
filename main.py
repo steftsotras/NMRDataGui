@@ -17,6 +17,7 @@ from GUI_Toolbox import ComparisonTableModelData
 from GUI_Toolbox import NMRData
 from Driver_referenceMeasurement_createFile_importExcel import Driver_referenceMeasurement_createFile_importExcel
 from Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel import Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel
+from Driver_comparisonPlots import Driver_comparisonPlots
 
 import pandas as pd
 
@@ -443,10 +444,10 @@ class GUI_MainWindow:
         groupedT2 = self.tableModel.getGroupedT2()
         numOfConcentrations = self.tableModel.getNumOfConcentrations()
 
-        print(groupedT1)
-        print(groupedT2)
-        print(type(numOfConcentrations))
-        print(model.rowCount())
+        # print(groupedT1)
+        # print(groupedT2)
+        # print(type(numOfConcentrations))
+        # print(model.rowCount())
 
         data = [[0 for x in range(model.columnCount())] for y in range(model.rowCount())]
         
@@ -618,17 +619,19 @@ class GUI_MainWindow:
 
     def fetch_input_comperisonPlots(self):
         
+        model = self.tableView_comperisonPlots.model()
 
-        data = [[0 for x in range(self.tableModel_comperisonPlots.columnCount())] for y in range(self.tableModel_comperisonPlots.rowCount())]
-        files = [0 for x in range(self.tableModel_comperisonPlots.rowCount())]
-        files_T2 = [0 for x in range(self.tableModel_comperisonPlots.rowCount())]
+        data = [[0 for x in range(model.columnCount())] for y in range(model.rowCount())]
+        
+        files = list()
+        legends = list()
 
         #fetch table
-        for row in range(self.tableModel_comperisonPlots.rowCount()):
+        for row in range(model.rowCount()):
 
-            pos = int(self.tableModel_comperisonPlots.data( self.tableModel_comperisonPlots.index(row, 2)))
+            pos = int(model.data(model.index(row, 2)))
 
-            if pos < 1 or pos > self.tableModel_comperisonPlots.rowCount():
+            if pos < 1 or pos > model.rowCount():
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Warning)
                 msgBox.setText("Wrong position given")
@@ -637,13 +640,19 @@ class GUI_MainWindow:
                 returnValue = msgBox.exec()
                 return 0
 
-            for column in range(self.tableModel_comperisonPlots.columnCount()):
+            for column in range(model.columnCount()):
                 #print("ooooo "+str(column))
-                index = self.tableModel_comperisonPlots.index(row, column)
+                index = model.index(row, column)
                 # We suppose data are strings
-                data[pos-1][column] = str(self.tableModel_comperisonPlots.data(index))
+                data[pos-1][column] = str(model.data(index))
+        
+        for j in range(model.rowCount()):
+            legends.append(data[j][1])
+        
+        files = self.tableModel_comperisonPlots.getRelaxativityFiles()
 
-
+        print(files)
+        print(legends)
 
 
         PlotName = []
@@ -677,14 +686,12 @@ class GUI_MainWindow:
             language = "german"
         else:
             language = "english"
-            #driver = Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel()
-            #driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, remarks[i-1], surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), self.numberOfConcentrations_surfaceAreaCalculation, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[i], particlemassfromTable[i], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles, i)
+            driver = Driver_comparisonPlots()
+            driver.runDriver(files, T1_T2, VolumeFraction, legends, language, PlotName)
             language = "german"
 
-        # driver = Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel()
-        # driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, remarks[i-1], surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), self.numberOfConcentrations_surfaceAreaCalculation, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[i], particlemassfromTable[i], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles, i)
-
-
+        driver = Driver_comparisonPlots()
+        driver.runDriver(files, T1_T2, VolumeFraction, legends, language, PlotName)
 
     #************************************************************************#
     ######################    TAB 3    #######################################
@@ -774,8 +781,7 @@ class GUI_MainWindow:
         self.updateSelWeights_btn_surfaceAreaCalculation = self.ui.pushButton_surfaceAreaCalculation_SetUpdateSelectedWeights
         self.updateSelWeights_btn_surfaceAreaCalculation.clicked.connect(self.updateSelWeights_surfaceAreaCalculation)
 
-        self.groupedT1_surfaceAreaCalculation = list()
-        self.groupedT2_surfaceAreaCalculation = list()
+        
 
     def addReferenceMeasrementFiles(self):
         textForOpeningFiles = "Please select Files for Concentration"
@@ -867,17 +873,20 @@ class GUI_MainWindow:
         #print(fileInfo)
         #Update UI
 
+        groupedT1_surfaceAreaCalculation = list()
+        groupedT2_surfaceAreaCalculation = list()
+
         #create groupedfiles for script input
         fileInfo.sort(key=lambda x: x[1])
         groupedBySampleName = functools.reduce(lambda l, x: (l.append([x]) if l[-1][0][1] != x[1] else l[-1].append(x)) or l, fileInfo[1:], [[fileInfo[0]]]) if fileInfo else []
         
-        self.numberOfConcentrations_surfaceAreaCalculation = 0
+        numberOfConcentrations_surfaceAreaCalculation = 0
 
         
 
         for groupRow in groupedBySampleName:
 
-            self.numberOfConcentrations_surfaceAreaCalculation += 1
+            numberOfConcentrations_surfaceAreaCalculation += 1
             #print("GROUP")    
             #print(groupRow)
 
@@ -894,16 +903,16 @@ class GUI_MainWindow:
             for groupT in groupRow:
 
                 if str(groupT[0]) == "T2A":
-                    self.groupedT2_surfaceAreaCalculation.append(groupT)
+                    groupedT2_surfaceAreaCalculation.append(groupT)
                 elif str(groupT[0]) == "T1":
-                    self.groupedT1_surfaceAreaCalculation.append(groupT)
+                    groupedT1_surfaceAreaCalculation.append(groupT)
                 else:
                     return 0
 
         #self.CreateTable(self.numberOfConcentrations, self.groupedT1, self.groupedT2)
         sheetname = self.comboWeights_surfaceAreaCalculation.currentText()
 
-        model = self.tableModel_surfaceAreaCalculation.AddRows(self.numberOfConcentrations_surfaceAreaCalculation, self.groupedT1_surfaceAreaCalculation, self.groupedT2_surfaceAreaCalculation,sheetname)
+        model = self.tableModel_surfaceAreaCalculation.AddRows(numberOfConcentrations_surfaceAreaCalculation, groupedT1_surfaceAreaCalculation, groupedT2_surfaceAreaCalculation,sheetname)
         
         table = self.ui.tableView_surfaceAreaCalculation_mesurementFiles
         table.setModel(model)
@@ -954,13 +963,18 @@ class GUI_MainWindow:
         #print(dateTime.dateTime().toString(self.ui.dateTimeEdit_surfaceAreaCalculation_dateTime.displayFormat()))
 
         model = self.ui.tableView_surfaceAreaCalculation_mesurementFiles.model()
+
+        groupedT1 = self.tableModel_surfaceAreaCalculation.getGroupedT1()
+        groupedT2 = self.tableModel_surfaceAreaCalculation.getGroupedT2()
+        numOfConcentrations = self.tableModel_surfaceAreaCalculation.getNumOfConcentrations()
+
         #print("aaaa "+str(self.numberOfConcentrations_surfaceAreaCalculation))
-        data = [[0 for x in range(model.columnCount())] for y in range(self.numberOfConcentrations_surfaceAreaCalculation)]
+        data = [[0 for x in range(model.columnCount())] for y in range(numOfConcentrations)]
         
-        files_T1 = [[0 for x in range(3)] for y in range(self.numberOfConcentrations_surfaceAreaCalculation)]
-        files_T2 = [[0 for x in range(3)] for y in range(self.numberOfConcentrations_surfaceAreaCalculation)]
-        filespath_T1 = [[0 for x in range(3)] for y in range(self.numberOfConcentrations_surfaceAreaCalculation)]
-        filespath_T2 = [[0 for x in range(3)] for y in range(self.numberOfConcentrations_surfaceAreaCalculation)]
+        files_T1 = [[0 for x in range(3)] for y in range(numOfConcentrations)]
+        files_T2 = [[0 for x in range(3)] for y in range(numOfConcentrations)]
+        filespath_T1 = [[0 for x in range(3)] for y in range(numOfConcentrations)]
+        filespath_T2 = [[0 for x in range(3)] for y in range(numOfConcentrations)]
         
         liquidmassfromTable = list()
         particlemassfromTable = list()
@@ -971,7 +985,7 @@ class GUI_MainWindow:
 
             pos = int(model.data( model.index(row, 5)))
             #print(pos)
-            if pos < 1 or pos > self.numberOfConcentrations_surfaceAreaCalculation:
+            if pos < 1 or pos > numOfConcentrations:
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Warning)
                 msgBox.setText("Wrong position given")
@@ -983,10 +997,10 @@ class GUI_MainWindow:
             #Populate filenames in the correct order
             
             for i in range(3):
-                files_T1[pos-1][i] = self.groupedT1_surfaceAreaCalculation[group_row][2]
-                files_T2[pos-1][i] = self.groupedT2_surfaceAreaCalculation[group_row][2]
-                filespath_T1[pos-1][i] = self.groupedT1_surfaceAreaCalculation[group_row][4]
-                filespath_T2[pos-1][i] = self.groupedT2_surfaceAreaCalculation[group_row][4]
+                files_T1[pos-1][i] = groupedT1[group_row][2]
+                files_T2[pos-1][i] = groupedT2[group_row][2]
+                filespath_T1[pos-1][i] = groupedT1[group_row][4]
+                filespath_T2[pos-1][i] = groupedT2[group_row][4]
                 group_row += 1
 
             for column in range(model.columnCount()):
@@ -994,7 +1008,7 @@ class GUI_MainWindow:
                 # We suppose data are strings
                 data[pos-1][column] = str(model.data(index)) 
 
-        for j in range(self.numberOfConcentrations_surfaceAreaCalculation) :
+        for j in range(numOfConcentrations) :
             liquidmassfromTable.append(float(data[j][3]))
             particlemassfromTable.append(float(data[j][4]))
 
@@ -1028,11 +1042,11 @@ class GUI_MainWindow:
             else:
                 language = "english"
                 driver = Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel()
-                driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, remarks[i-1], surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), self.numberOfConcentrations_surfaceAreaCalculation, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[i], particlemassfromTable[i], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles, i)
+                driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, remarks[i-1], surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[i], particlemassfromTable[i], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles, i)
                 language = "german"
 
             driver = Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel()
-            driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, remarks[i-1], surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), self.numberOfConcentrations_surfaceAreaCalculation, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[i], particlemassfromTable[i], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles, i)
+            driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, remarks[i-1], surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[i], particlemassfromTable[i], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles, i)
 
 
 
