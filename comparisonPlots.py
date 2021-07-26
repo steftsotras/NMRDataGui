@@ -76,15 +76,15 @@ class comparisonPlots():
             
             # Plot linear fit
             plt.plot(x,slope*x+y_intercept,linestyle='--',color = color[counter])
-        if language=='englisch':
+        if language=='english':
             plt.xlabel('$V_P \cdot V_L^{-1} \cdot$ $A$ / $\mathrm{m}^\mathrm{2} \mathrm{g}^\mathrm{-1}$')
-            plt.legend(loc='best', fontsize='large')
+            plt.legend(loc='best', fontsize='medium')
         elif language=='german':
             #r'$\Psi_P \cdot \mathrm{S}$ / $\mathrm{m}^\mathrm{2}\mathrm{g}^\mathrm{-1}$'
             plt.xlabel(r'$\Psi_P \cdot \mathrm{S}$ / $\mathrm{m}^\mathrm{2}\mathrm{g}^\mathrm{-1}$', fontsize='large')
             plt.legend(loc='best', fontsize='medium')
         # Check if calibration is for T1 or T2
-        if language=='englisch':
+        if language=='english':
             if T1_T2 == 'T1':
                 plt.ylabel('$T_1^{-1}$ / $\mathrm{ms}^\mathrm{-1}$')
             elif T1_T2 == 'T2':
@@ -92,11 +92,11 @@ class comparisonPlots():
         elif language=='german':
             if T1_T2 == 'T1':
                 plt.ylabel('$T_1^{-1}$ / $\mathrm{ms}^\mathrm{-1}$', fontsize='medium')
-                plt.ylim([0,0.0006])
+                #plt.ylim([0,0.0006])
                #HIER
             elif T1_T2 == 'T2':
                 plt.ylabel('$T_2^{-1}$ / $\mathrm{ms}^\mathrm{-1}$', fontsize='medium')
-                plt.ylim([0,0.001])
+                #plt.ylim([0,0.001])
                #HIER
         plt.tight_layout()
         plt.legend(fontsize='medium', loc='upper left')

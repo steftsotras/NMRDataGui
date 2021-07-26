@@ -8,6 +8,7 @@ Created on Thu Dec 17 08:35:27 2020
 import comparisonPlots as comparisonPlots
 import numpy as np
 import matplotlib.pyplot as plt
+import locale
 
 class Driver_comparisonPlots:
 
@@ -15,6 +16,19 @@ class Driver_comparisonPlots:
         # Compare calibration lines for T1 and T2
         #referenceMeasurementFiles = ['../surfaceRelaxivity/Tetrahydrofuran/20210617_CarbonBlack_N134_THF_density_AM_#172_#173_#174_#175_Tetrahydrofuran.xlsx','../surfaceRelaxivity/Tetrahydrofuran/20210617_CarbonBlack_N375_THF_density_AM_#176_#177_#178_#179_Tetrahydrofuran.xlsx','../surfaceRelaxivity/Tetrahydrofuran/20210617_CarbonBlack_N774_THF_density_AM_#169_#170_#171_Tetrahydrofuran.xlsx']
         
+        if language == 'english':
+            locale.setlocale(locale.LC_NUMERIC, "en_US")
+            plt.rcdefaults()
+            plt.rcParams['axes.formatter.use_locale'] = True
+            plt.rcParams.update({'font.size': 12})
+
+        elif language == "german":
+            locale.setlocale(locale.LC_NUMERIC, "de_DE")
+            plt.rcdefaults()
+            plt.rcParams['axes.formatter.use_locale'] = True
+            plt.rcParams.update({'font.size': 12})
+
+
         cal = comparisonPlots.comparisonPlots(referenceMeasurementFiles)
         cal.setReferenceMeasurementObjects()
 
