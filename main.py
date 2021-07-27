@@ -49,6 +49,7 @@ class GUI_MainWindow:
         self.CalibrationLine_AcomArea()
         self.ComperisonPlots()
         self.SurfaceAreaCalculation()
+        self.CalibrationLine_Spinsolve()
 
 
 
@@ -118,6 +119,7 @@ class GUI_MainWindow:
 
         self.comboWeights = self.ui.comboBox_selectWeighInData
         self.comboWeights_surfaceAreaCalculation = self.ui.comboBox_surfaceAreaCalculation_selectWeighInData
+        self.comboWeights_Spinsolve = self.ui.comboBox_selectWeighInData_Spinsolve
         self.SheetComboLoad()
 
         
@@ -263,6 +265,13 @@ class GUI_MainWindow:
         materialName_surfaceAreaCalculation.setCurrentIndex(matindex)
         self.setMaterialProperties_surfaceAreaCalculation()
 
+        #Tab4
+        materialName_Spinsolve = self.ui.comboBox_materialName_Spinsolve
+        materialName_Spinsolve.addItems(material)
+        materialName_Spinsolve.setCurrentIndex(matindex)
+        self.setMaterialProperties_Spinsolve()
+
+
     def updateBulkComboBoxes(self, bulk, state):
 
         bulkindex = 0
@@ -281,6 +290,12 @@ class GUI_MainWindow:
         bulkName_surfaceAreaCalculation.addItems(bulk)
         bulkName_surfaceAreaCalculation.setCurrentIndex(bulkindex)
         self.setBulkProperties_surfaceAreaCalculation()
+
+        #Tab4
+        bulkName_Spinsolve = self.ui.comboBox_bulkName_Spinsolve
+        bulkName_Spinsolve.addItems(bulk)
+        bulkName_Spinsolve.setCurrentIndex(bulkindex)
+        self.setBulkProperties_Spinsolve()
 
 
     def setMaterialProperties(self):
@@ -312,6 +327,7 @@ class GUI_MainWindow:
             sheet_names.append(sheet_name)
         self.comboWeights.addItems(sheet_names)
         self.comboWeights_surfaceAreaCalculation.addItems(sheet_names)   
+        self.comboWeights_Spinsolve.addItems(sheet_names)
 
 
     def updateWeights(self):
@@ -531,7 +547,340 @@ class GUI_MainWindow:
         driver.runDriver(materialName.currentText(), evaluation, bulkName.currentText(), user.toPlainText(), language, remarks.toPlainText(), temperature.toPlainText(), float(surfaceArea_Argon.toPlainText()), float(densityBulk.toPlainText()), float(particleDensity.toPlainText()), dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable, particlemassfromTable )
         
 
-    
+
+
+
+    #************************************************************************#
+    ######################    TAB 4    #######################################
+    #************************************************************************#
+
+
+    def CalibrationLine_Spinsolve(self):
+            
+        #GUI Variables
+        self.ui.dateTimeEdit_dateTime_Spinsolve.setDateTime(QtCore.QDateTime.currentDateTime())
+        self.ui.dateTimeEdit_dateTime_Spinsolve.setDisplayFormat("dd/MM/yyyy")
+
+        self.user_Spinsolve = self.ui.plainTextEdit_user_Spinsolve
+        
+        self.dateTime_Spinsolve = self.ui.dateTimeEdit_dateTime_Spinsolve
+        self.densityBulk_Spinsolve = self.ui.plainTextEdit_densityBulk_Spinsolve
+        self.evaluation_double_Spinsolve = self.ui.checkBox_evaluation_other_Spinsolve
+        self.evaluation_single_Spinsolve = self.ui.checkBox_evaluation_single_Spinsolve
+        self.language_english_Spinsolve = self.ui.checkBox_language_english_Spinsolve
+        self.language_german_Spinsolve = self.ui.checkBox_language_german_Spinsolve
+        
+        self.particleDensity_Spinsolve = self.ui.plainTextEdit_particleDensity_Spinsolve
+        self.remarks_Spinsolve = self.ui.plainTextEdit_remarks_Spinsolve
+        self.surfaceArea_Argon_Spinsolve = self.ui.plainTextEdit_surfaceArea_Argon_Spinsolve
+        self.temperature_Spinsolve = self.ui.plainTextEdit_temperature_Spinsolve
+
+        self.materialName_Spinsolve = self.ui.comboBox_materialName_Spinsolve
+        self.bulkName_Spinsolve = self.ui.comboBox_bulkName_Spinsolve
+
+
+
+        self.user_Spinsolve.setPlainText("Alexander Michalowski")
+        #bulkName_Spinsolve.addItems(["Milipore-Wasser_LFG", "Milipore-Wasser"])
+        #densityBulk_Spinsolve.setPlainText("1")
+        #materialName_Spinsolve.addItems(["80nmIV", "Test2"])
+        #particleDensity_Spinsolve.setPlainText("2.14")
+        self.remarks_Spinsolve.setPlainText("#76,#77,#79")
+        #surfaceArea_Argon_Spinsolve.setPlainText("47.0")
+        self.temperature_Spinsolve.setPlainText("25°C")
+
+        self.run_btn_Spinsolve = self.ui.pushButton_run_MeasurementFile_Spinsolve
+        self.run_btn_Spinsolve.clicked.connect(self.fetch_input_Spinsolve)
+
+
+        #ADD - DELETE FILES BUTTONS
+        self.add_btn_Spinsolve = self.ui.pushButton_AddMesurementFiles_Spinsolve
+        self.add_btn_Spinsolve.clicked.connect(self.addFiles_Spinsolve)
+
+        self.remove_btn_Spinsolve = self.ui.pushButton_RemoveAllMesurementFiles_Spinsolve
+        self.remove_btn_Spinsolve.clicked.connect(self.removeFiles_Spinsolve)
+        
+        self.removeSel_btn_Spinsolve = self.ui.pushButton_RemoveSelectedMeasrementFiles_Spinsolve
+        self.removeSel_btn_Spinsolve.clicked.connect(self.removeSelFiles_Spinsolve)
+
+        
+        
+        #COMBO BOXES
+        self.comboMaterial_Spinsolve = self.ui.comboBox_materialName_Spinsolve
+        self.comboMaterial_Spinsolve.currentTextChanged.connect(self.setMaterialProperties_Spinsolve)
+
+        self.comboBulk_Spinsolve = self.ui.comboBox_bulkName_Spinsolve
+        self.comboBulk_Spinsolve.currentTextChanged.connect(self.setBulkProperties_Spinsolve)
+
+        self.comboWeights_Spinsolve = self.ui.comboBox_selectWeighInData_Spinsolve
+        #self.comboWeights_surfaceAreaCalculation = self.ui.comboBox_surfaceAreaCalculation_selectWeighInData
+
+        #ADD - DELETE MAT/BULK BUTTONS
+        
+        self.addMaterial_btn_Spinsolve = self.ui.pushButton_AddMaterial_Spinsolve
+        self.addMaterial_btn_Spinsolve.clicked.connect(lambda:self.addMaterialData(self.ui.comboBox_materialName_Spinsolve.currentText(), self.ui.plainTextEdit_surfaceArea_Argon_Spinsolve.toPlainText(), self.ui.plainTextEdit_particleDensity_Spinsolve.toPlainText()))
+
+        self.addBulk_btn_Spinsolve = self.ui.pushButton_AddBulk_Spinsolve
+        self.addBulk_btn_Spinsolve.clicked.connect(lambda:self.addBulkData(self.ui.comboBox_bulkName_Spinsolve.currentText(), self.ui.plainTextEdit_densityBulk_Spinsolve.toPlainText()))
+
+        self.removeMaterial_btn_Spinsolve = self.ui.pushButton_RemoveMaterial_Spinsolve
+        self.removeMaterial_btn_Spinsolve.clicked.connect(lambda:self.removeMaterialData(self.ui.comboBox_materialName_Spinsolve.currentText()))
+
+        self.removeBulk_btn_Spinsolve = self.ui.pushButton_RemoveBulk_Spinsolve
+        self.removeBulk_btn_Spinsolve.clicked.connect(lambda:self.removeBulkData(self.ui.comboBox_bulkName_Spinsolve.currentText()))
+
+        self.tableModel_Spinsolve = TableModelData()
+
+        self.updateWeights_Spinsolve_btn = self.ui.pushButton_SetUpdateWeights_Spinsolve
+        self.updateWeights_Spinsolve_btn.clicked.connect(self.updateWeights_Spinsolve)
+
+        self.updateSelWeights_Spinsolve_btn = self.ui.pushButton_SetUpdateSelectedWeights_Spinsolve
+        self.updateSelWeights_Spinsolve_btn.clicked.connect(self.updateSelWeights_Spinsolve)
+
+
+
+
+
+    def setMaterialProperties_Spinsolve(self):
+        
+        matName = self.ui.comboBox_materialName_Spinsolve.currentText()
+
+        for i in self.material_bulk_data['materials']:
+
+            if i['materialName'] == (matName):
+                self.ui.plainTextEdit_particleDensity_Spinsolve.setPlainText(i['particleDensity'])
+                self.ui.plainTextEdit_surfaceArea_Argon_Spinsolve.setPlainText(i['surfaceAreaArgon'])
+
+    def setBulkProperties_Spinsolve(self):
+        
+        bName = self.ui.comboBox_bulkName_Spinsolve.currentText()
+
+        for i in self.material_bulk_data['bulk']:
+
+            if i['bulkName'] == (bName):
+                self.ui.plainTextEdit_densityBulk_Spinsolve.setPlainText(i['densityBulk'])
+
+
+
+
+    def updateWeights_Spinsolve(self):
+        self.tableModel_Spinsolve.updateAllWeights(self.comboWeights_Spinsolve.currentText())
+    def updateSelWeights_Spinsolve(self):
+
+        #fetch selected
+        plainText_selectedWeights = self.ui.plainTextEdit_SetUpdateWeights_Spinsolve
+        selectedRowsUPD = plainText_selectedWeights.toPlainText().split(",")
+
+        selectedRowsUPD = [int(i) for i in selectedRowsUPD]
+
+        self.tableModel_Spinsolve.updateSelWeights(self.comboWeights_Spinsolve.currentText(), selectedRowsUPD)
+        
+    def removeSelFiles_Spinsolve(self):
+
+        #fetch selected
+        plainText_selectedFiles = self.ui.plainTextEdit_RemoveSelectedFilesMeasrementFiles_Spinsolve
+        selectedRowsDEL = plainText_selectedFiles.toPlainText().split(",")
+
+        selectedRowsDEL = [int(i) for i in selectedRowsDEL]
+
+        self.tableModel_Spinsolve.DelRows(selectedRowsDEL)
+        
+    #Grouping Files to cook them up for the script
+    def groupFiles_Spinsolve(self, files):
+
+        fileInfo = list()
+        #groupedfiles = []
+        
+        for f in files:
+            results = self.nmrDataTools.getNMRinfo(f)
+            results.append(f)
+            fileInfo.append(results)
+
+        #print(fileInfo)
+        #Update UI
+        groupedT1 = list()
+        groupedT2 = list()
+
+        #create groupedfiles for script input
+        fileInfo.sort(key=lambda x: x[1])
+        groupedBySampleName = functools.reduce(lambda l, x: (l.append([x]) if l[-1][0][1] != x[1] else l[-1].append(x)) or l, fileInfo[1:], [[fileInfo[0]]]) if fileInfo else []
+        
+        numberOfConcentrations = 0
+
+        
+
+        for groupRow in groupedBySampleName:
+
+            numberOfConcentrations += 1
+            #print("GROUP")    
+            #print(groupRow)
+
+            if len(groupRow) != 6:
+                msgBox = QtWidgets.QMessageBox()
+                msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+                msgBox.setText("Wrong Input!!")
+                msgBox.setWindowTitle("Eisai malakas")
+                msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                returnValue = msgBox.exec()
+                return 0
+            
+
+            for groupT in groupRow:
+
+                if str(groupT[0]) == "T2A":
+                    groupedT2.append(groupT)
+                elif str(groupT[0]) == "T1":
+                    groupedT1.append(groupT)
+                else:
+                    return 0
+        
+        #print(groupedT1)
+        #print(groupedT2)
+
+        #self.CreateTable(self.numberOfConcentrations, self.groupedT1, self.groupedT2)
+
+        sheetname = self.comboWeights_Spinsolve.currentText()
+
+        model = self.tableModel_Spinsolve.AddRows(numberOfConcentrations, groupedT1, groupedT2, sheetname)
+        
+        table = self.ui.tableView_mesurementFiles_Spinsolve
+        table.setModel(model)
+        table.horizontalHeader().resizeSection(0, 330)
+        table.resizeColumnsToContents()    
+
+
+
+    #ADD REMOVE FILES LOGIC
+    def addFiles_Spinsolve(self):
+        textForOpeningFiles = "Please select Files for Concentration"
+        files = fileopenbox(textForOpeningFiles, "Dunno", default = "", filetypes= "*.txt", multiple=True)
+        if files:
+            #print(files)
+            self.groupFiles_Spinsolve(files)
+        else:
+            #print("exit")
+            pass
+        
+    def removeFiles_Spinsolve(self):
+        self.tableModel_Spinsolve.RemoveAllRows()
+        
+
+
+
+
+    #RUN BUTTON
+    def fetch_input_Spinsolve(self):
+        
+        user_Spinsolve = self.ui.plainTextEdit_user_Spinsolve
+        bulkName_Spinsolve = self.ui.comboBox_bulkName_Spinsolve
+        dateTime = self.ui.dateTimeEdit_dateTime_Spinsolve
+        densityBulk_Spinsolve = self.ui.plainTextEdit_densityBulk_Spinsolve
+        evaluation_double_Spinsolve = self.ui.checkBox_evaluation_other
+        evaluation_single_Spinsolve = self.ui.checkBox_evaluation_single_Spinsolve
+        language_english_Spinsolve = self.ui.checkBox_language_english_Spinsolve
+        language_german_Spinsolve = self.ui.checkBox_language_german_Spinsolve
+        materialName_Spinsolve = self.ui.comboBox_materialName_Spinsolve
+        particleDensity_Spinsolve = self.ui.plainTextEdit_particleDensity_Spinsolve
+        remarks_Spinsolve = self.ui.plainTextEdit_remarks_Spinsolve
+        surfaceArea_Argon_Spinsolve = self.ui.plainTextEdit_surfaceArea_Argon_Spinsolve
+        temperature_Spinsolve = self.ui.plainTextEdit_temperature_Spinsolve
+
+        #print(dateTime.dateTime().toString(self.ui.dateTimeEdit_dateTime_Spinsolve.displayFormat()))
+
+        model = self.ui.tableView_mesurementFiles_Spinsolve.model()
+
+        groupedT1 = self.tableModel_Spinsolve.getGroupedT1()
+        groupedT2 = self.tableModel_Spinsolve.getGroupedT2()
+        numOfConcentrations = self.tableModel_Spinsolve.getNumOfConcentrations()
+
+        # print(groupedT1)
+        # print(groupedT2)
+        # print(type(numOfConcentrations))
+        # print(model.rowCount())
+
+        data = [[0 for x in range(model.columnCount())] for y in range(model.rowCount())]
+        
+        files_T1 = [[0 for x in range(3)] for y in range(model.rowCount())]
+        files_T2 = [[0 for x in range(3)] for y in range(model.rowCount())]
+        filespath_T1 = [[0 for x in range(3)] for y in range(model.rowCount())]
+        filespath_T2 = [[0 for x in range(3)] for y in range(model.rowCount())]
+        
+        liquidmassfromTable = list()
+        particlemassfromTable = list()
+        #print(particlemassfromTable)
+        group_row = 0
+
+        for row in range(model.rowCount()):
+            #data.append([])
+
+            pos = int(model.data( model.index(row, 5)))
+            print(pos)
+            if pos < 1 or pos > model.rowCount():
+                msgBox = QtWidgets.QMessageBox()
+                msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+                msgBox.setText("Wrong position given")
+                msgBox.setWindowTitle("Eisai malakas")
+                msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                returnValue = msgBox.exec()
+                return 0
+
+            #Populate filenames in the correct order
+            
+            for i in range(3):
+                files_T1[pos-1][i] = groupedT1[group_row][2]
+                files_T2[pos-1][i] = groupedT2[group_row][2]
+                filespath_T1[pos-1][i] = groupedT1[group_row][4]
+                filespath_T2[pos-1][i] = groupedT2[group_row][4]
+                group_row += 1
+
+            for column in range(model.columnCount()):
+                #print("ooooo "+str(column))
+                index = model.index(row, column)
+                # We suppose data are strings
+                data[pos-1][column] = str(model.data(index)) 
+
+        for j in range(model.rowCount()) :
+            liquidmassfromTable.append(float(data[j][3]))
+            particlemassfromTable.append(float(data[j][4]))
+
+
+        allFiles = files_T1 + files_T2
+
+        #print(liquidmassfromTable)
+        #print(particlemassfromTable)
+        print(allFiles)
+        print(filespath_T1)
+        print(filespath_T2)
+        #print(data)
+        
+        if evaluation_single_Spinsolve.isChecked() == True and evaluation_double_Spinsolve.isChecked() == False:
+            evaluation = "single"
+        elif evaluation_single_Spinsolve.isChecked() == False and evaluation_double_Spinsolve.isChecked() == True:
+            evaluation = "????"
+        else:
+            msgBox = QtWidgets.QMessageBox()
+            msgBox.setIcon(QtWidgets.QMessageBox.Warning)
+            msgBox.setText("both checked evaluation")
+            msgBox.setWindowTitle("Eisai malakas")
+            msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
+            returnValue = msgBox.exec()
+            return 0
+        
+        if language_english_Spinsolve.isChecked() == True and language_german_Spinsolve.isChecked() == False:
+            language = "english"
+        elif language_english_Spinsolve.isChecked() == False and language_german_Spinsolve.isChecked() == True:
+            language = "german"
+        else:
+            language = "english"
+            driver = Driver_referenceMeasurement_createFile_importExcel()
+            driver.runDriver(materialName_Spinsolve.currentText(), evaluation, bulkName_Spinsolve.currentText(), user_Spinsolve.toPlainText(), language, remarks_Spinsolve.toPlainText(), temperature_Spinsolve.toPlainText(), float(surfaceArea_Argon_Spinsolve.toPlainText()), float(densityBulk_Spinsolve.toPlainText()), float(particleDensity_Spinsolve.toPlainText()), dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable, particlemassfromTable )
+            language = "german"
+
+        driver = Driver_referenceMeasurement_createFile_importExcel()
+        driver.runDriver(materialName_Spinsolve.currentText(), evaluation, bulkName_Spinsolve.currentText(), user_Spinsolve.toPlainText(), language, remarks_Spinsolve.toPlainText(), temperature_Spinsolve.toPlainText(), float(surfaceArea_Argon_Spinsolve.toPlainText()), float(densityBulk_Spinsolve.toPlainText()), float(particleDensity_Spinsolve.toPlainText()), dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable, particlemassfromTable )
+        
+
+
 
     #************************************************************************#
     ######################    TAB 2    #######################################
