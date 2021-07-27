@@ -187,7 +187,7 @@ class NmrToolbox():
         for f in files:
             
                 
-            allFiles.append(f)
+            allFiles.append(filespath[i])
             
             relaxationTimes = list()
             magnetization = list()
@@ -202,14 +202,14 @@ class NmrToolbox():
                 magnetization.append(results[1])
                 
             
-            allRelaxationTimes.append([])
-            allMagnetizations.append([])
+            # allRelaxationTimes.append([])
+            # allMagnetizations.append([])
             
-            allRelaxationTimes[i] = relaxationTimes
-            allMagnetizations[i] = magnetization
+            # allRelaxationTimes[i] = relaxationTimes
+            # allMagnetizations[i] = magnetization
             i+=1
     
-        return allRelaxationTimes, allMagnetizations, allFiles
+        return relaxationTimes, magnetization, allFiles[0]
 
     
     def getSurfaceAreaMeasuremntResults(T1_T2, bulk_suspension):
