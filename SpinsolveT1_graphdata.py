@@ -39,7 +39,8 @@ anonymous_fun = lambda x, y_0, R_0, A: fit_func(x, y_0, A, R_0)
 popt, pcov = curve_fit(anonymous_fun, xdata = Frequency_list_graph, ydata = Intensity_list_graph)
 
 R_0_fit = popt[1]
-T1 = (1/R_0_fit)*1000 #ms
+T1_long = (1/R_0_fit)*1000 #ms
+T1 = round(T1_long, 1)
 
 print('T1 = ', T1, 'ms')
 
