@@ -90,7 +90,11 @@ class TableModelData():
             self.model.setItem(row, 2, item) 
 
             sample_name = group1[i][1]
-            match = re.match('#([0-9]\.*)*', sample_name)
+            print(sample_name)
+            #match = re.match('#([0-9]\.*)*', sample_name)
+            match = re.search('(#[0-9]+\.*)', sample_name)
+
+            print(match)
 
             if match is not None:
                 remark = match[0]
@@ -130,7 +134,7 @@ class TableModelData():
         item0Text = str(item0.text())   
 
         sample_name = item0Text
-        match = re.match('#([0-9]\.*)*', sample_name)
+        match = re.search('(#[0-9]+\.*)', sample_name)
 
         if match is not None:
             remark = match[0]
