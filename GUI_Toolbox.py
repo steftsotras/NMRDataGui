@@ -10,7 +10,13 @@ import json
 import pandas as pd
 import re
 
+import numpy as np
+from scipy.optimize import curve_fit
+import warnings 
+
 from MainWindow import Ui_MainWindow_NMR
+
+warnings.filterwarnings("ignore")
 
 class TableModelData():
     
@@ -57,6 +63,7 @@ class TableModelData():
 
     def AddRows(self, num, group1, group2, sheet_name):
         
+        print(group1)
         
         i=0
         
@@ -263,3 +270,69 @@ class NMRData:
         results = [exp_name, sample_name, file_name, t_value  ]
 
         return results
+
+
+    #def getSpinsolveData(self, nmrfile):
+
+    def SpinsolveT1_graphdata(self, file):
+
+        # Import Graph data
+
+        df = pd.read_csv (file, decimal='.', delimiter='\t', header=None)
+
+        # print (df)
+        Intensity_list_graph = np.asarray(df[1].tolist())
+        Frequency_list_graph = np.asarray(df[0].tolist())
+
+        # plt.figure()
+        # plt.scatter(Frequency_list_graph,Intensity_list_graph)
+        # plt.xlabel('Time / s')
+        # plt.ylabel('Intensity')
+        # # plt.savefig('20210607-095459-T2 Bulk-Wasser_raw-data.png')
+        # plt.show()
+
+        def fit_func(x, y_0, A, R_0):
+            y = y_0 + A * np.exp(- R_0*x)
+            return y
+
+        anonymous_fun = lambda x, y_0, R_0, A: fit_func(x, y_0, A, R_0) 
+
+        popt, pcov = curve_fit(anonymous_fun, xdata = Frequency_list_graph, ydata = Intensity_list_graph)
+
+        R_0_fit = popt[1]
+        T1_long = (1/R_0_fit)*1000 #ms
+        T1 = round(T1_long, 1)
+
+        #print('T1 = ', T1, 'ms')
+        return T1
+
+    def SpinsolveT2_log(self,file):
+        for i in range(30,0,-1): 
+            try:
+                df = pd.read_csv (file, decimal=',', delimiter=';', header=0)
+                
+                Intensity_list = np.asarray(df['Intensity'].tolist())
+                Frequency_list = np.asarray(df['Frequency(ppm)'].tolist())
+                
+                Frequency_list_short = Frequency_list[Frequency_list<i]  #evtl bis zur fehlermeldung
+                Intensity_list_short = Intensity_list[Frequency_list<i]
+                
+                Intensity_list_log = np.log(Intensity_list_short)
+                
+                def fit_func(x, y_0, A, R_0):
+                    y = np.log(y_0 + A * np.exp(- R_0*x))
+                    return y
+                
+                anonymous_fun = lambda x, y_0, R_0, A: fit_func(x, y_0, A, R_0) 
+                
+                popt, pcov = curve_fit(anonymous_fun, xdata = Frequency_list_short, ydata = Intensity_list_log)
+                
+                R_0_fit = popt[1]
+                T2_long = (1/R_0_fit)*1000 #ms
+                T2 = round(T2_long, 1)
+
+                #print('T2 = ', T2, 'ms')
+                return T2
+                
+            except ValueError: 
+                continue

@@ -754,17 +754,66 @@ class GUI_MainWindow:
 
     #ADD REMOVE FILES LOGIC
     def addFiles_Spinsolve(self):
+
+        T1_fileName = 'data_graph.csv'
+        T2_fileName = 'spectrum_processed.csv'
+
+        T1_files = list()
+        T2_files = list()
+
         textForOpeningFiles = "Please select Folder for Concentration"
         #files = fileopenbox(textForOpeningFiles, "Dunno", default = "", filetypes= "*.txt", multiple=True)
         dir = diropenbox(textForOpeningFiles, "Dunno", default = "../Spinsolve")
 
         if dir:
-            #print(dir)
+            i = 0 
+            j = 0
             for (path,dirs,files) in os.walk(dir):
-                print(path,'Path')
-                print(dirs,'Dir')
-                print(files,'Files')
-            #self.groupFiles_Spinsolve(files)
+                
+                # print(path,'Path')
+                # print(dirs,'Dir')
+                # print(files,'Files')
+                
+                if T1_fileName in files:
+
+                    T1_files.append([])
+
+                    T1_files[i].append('T1')
+                    T1_files[i].append(dir.split('\\')[-1])
+                    T1_files[i].append(path.split('\\')[-1])
+
+                    filepath = path+'\\'+T1_fileName
+                    T1_files[i].append(self.nmrDataTools.SpinsolveT1_graphdata(filepath))
+                    T1_files[i].append(filepath)
+
+                    i += 1
+
+                elif T2_fileName in files:
+
+                    T2_files.append([])
+
+                    T2_files[j].append('T2')
+                    T2_files[j].append(dir.split('\\')[-1])
+                    T2_files[j].append(path.split('\\')[-1])
+
+                    filepath = path+'\\'+T2_fileName
+                    T2_files[j].append(self.nmrDataTools.SpinsolveT2_log(filepath))
+                    T2_files[j].append(filepath)
+
+                    j += 1
+
+            
+            #print(T1_files,'T1')
+            #print(T2_files,'T2')
+
+            sheetname = self.comboWeights_Spinsolve.currentText()
+
+            model = self.tableModel_Spinsolve.AddRows(1, T1_files, T2_files, sheetname)
+            
+            table = self.ui.tableView_mesurementFiles_Spinsolve
+            table.setModel(model)
+            table.horizontalHeader().resizeSection(0, 330)
+            table.resizeColumnsToContents()    
         else:
             #print("exit")
             pass
