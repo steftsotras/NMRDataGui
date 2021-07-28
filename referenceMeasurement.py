@@ -436,6 +436,91 @@ class referenceMeasurement(NMR):
             excel_sheet_fileNames.to_excel(writer, 'measurement files',header = None, index=False)
             writer.save()
         
+
+        def createRelaxivityFile_withoutMz(self, evaluation):
+            # Create excel file with all information and the calculated surface relaxivity
+            
+            # Define file name 
+            if evaluation == 'single':
+
+                #CREATE SELF.BULK FOLDER DYNAMICALLY
+
+                self.relaxivityFileName = '../surfaceRelaxivity/' + self.bulk + '/' + str(self.date) + '_' + self.materialName + '_' + self.remarks + '_' + self.bulk + '.xlsx'
+            else:
+                self.relaxivityFileName = '../surfaceRelaxivityTwoCurves/' + self.bulk + '/' + str(self.date) + '_' + self.materialName + '_' + self.remarks + '_' + self.bulk + '.xlsx'
+            
+                
+            # Define list with general information for first excel sheet    
+            excel_list = []
+            excel_list.append(["materialName", self.materialName])
+            excel_list.append([ "bulkName", self.bulk])
+            excel_list.append(["User", self.user])
+            excel_list.append(["remarks", self.remarks])
+            excel_list.append(["surfaceArea(Argon)", self.surfaceArea_Argon])
+            excel_list.append(["measurementDate", self.date])
+            excel_list.append(["temperature", self.temperature])
+            excel_list.append(["densityParticle", self.densityParticle])
+            excel_list.append(["densityBulk", self.densityBulk])
+            excel_list.append([])
+            excel_list.append(['volumeFraction', 'relaxationTime', 'surfaceRelaxivity'])
+            excel_list.append(['mass', 'T1', self.surfaceRelaxivity['mass']['T1']])
+            excel_list.append(['mass', 'T2', self.surfaceRelaxivity['mass']['T2']])
+            
+            fileContent = pd.DataFrame(excel_list)
+            
+            # Define list with information on each calibration point for second excel sheet
+            excel_list_calibration = []
+            
+            for index in range(0,len(self.relaxationTime['T2'])):
+                excel_list_calibration.append([str(int(round(self.weightFraction[index]*100, 0))) + 'wt%'])
+                
+                # Check if particle mass was set, if no particle mass was set, the value is set to nan
+                if self.particleMass:
+                    excel_list_calibration.append(["particleMass", self.particleMass[index]])
+                else:
+                    excel_list_calibration.append(["particleMass", np.nan])
+                
+                if self.liquidMass:
+                    excel_list_calibration.append(["liquidMass", self.liquidMass[index]])
+                else:
+                    excel_list_calibration.append(["liquidMass", np.nan])
+                    
+                excel_list_calibration.append(["weightFraction", self.weightFraction[index]])
+                excel_list_calibration.append([])
+                excel_list_calibration.append(['determinationOfCalculation','volumeFraction'])
+                
+                excel_list_calibration.append(['mass', self.volumeFraction['mass'][index]])
+                
+                
+                if self.relaxationTime['T1']:
+                    excel_list_calibration.append(['relaxationTime T1']+ self.relaxationTime['T1'][index])
+                else:
+                    excel_list_calibration.append(['relaxatioTime T1']+ [np.nan])
+                excel_list_calibration.append(['relaxationTime T2']+ self.relaxationTime['T2'][index])
+                excel_list_calibration.append([])
+                excel_list_calibration.append([])
+                
+            excel_sheet_calibration = pd.DataFrame(excel_list_calibration)
+            
+            # Define list with measurement file names for third excel sheet
+            excel_list_fileNames = []
+            if self.measurementFileNames['T1'] and self.measurementFileNames['T2']:
+                for index in range(0,len(self.relaxationTime['T1'])):
+                    excel_list_fileNames.append([str(int(round(self.weightFraction[index]*100, 0))) + 'wt%'])
+                    excel_list_fileNames.append(["T1", self.measurementFileNames['T1'][index]])
+                    excel_list_fileNames.append(["T2", self.measurementFileNames['T2'][index]])
+                    excel_list_fileNames.append([])
+            
+            excel_sheet_fileNames = pd.DataFrame(excel_list_fileNames)
+            
+            # Write to excel file
+            writer = pd.ExcelWriter(self.relaxivityFileName, engine='openpyxl')
+            fileContent.to_excel(writer, 'general',header = None, index=False)
+            excel_sheet_calibration.to_excel(writer, 'calibration',header = None, index=False)
+            excel_sheet_fileNames.to_excel(writer, 'measurement files',header = None, index=False)
+            writer.save()
+        
+
         
         def readRelaxivityFile(self, relaxivityFileName):
             # Load all properties from exisitng relaxivity file

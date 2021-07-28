@@ -74,6 +74,8 @@ class Driver_referenceMeasurement_createFile_withoutExcel:
         ref.setUser(user)
         ref.setRemarks(remarks)
 
+        ref.MakeDirectory()
+
         # Set liquid density and particle density
         ref.setDensity(densityBulk,particleDensity)
 
@@ -101,13 +103,13 @@ class Driver_referenceMeasurement_createFile_withoutExcel:
         volFrac = ref.calculateVolumeFractionFromWeightFraction()
         volFrac = ref.calculateVolumeFractionFromMagnetization('T1')
         volFrac = ref.calculateVolumeFractionFromMagnetization('T2')
-        # ref.setVolumeFraction(volumeFraction,'mass')
+        #ref.setVolumeFraction(volumeFraction,'mass')
 
 
         # Calculate surface relaxivity ka for T1 and T2 measurement
         if thickener == False:
             ref.calculate_surfaceRelaxivity('T1', evaluation, lang, calculationOfVolFraction='mass', plot=True)
-            ref.calculate_surfaceRelaxivity('T1', evaluation, lang,calculationOfVolFraction='Mz', plot=True)
+            #ref.calculate_surfaceRelaxivity('T1', evaluation, lang,calculationOfVolFraction='Mz', plot=True)
             
             # Create T1/T2 vs. concentration and T1/T2 vs. absolute surface area (information about surface chemistry?)
             # slope_conc, slope_surf = ref.plot_T1_T2_ratio('german')
@@ -115,10 +117,11 @@ class Driver_referenceMeasurement_createFile_withoutExcel:
             # Calculate surface relaxivity in case of nonporous material
             if not porousMaterial:
                 ref.calculate_surfaceRelaxivity('T2', evaluation, lang, calculationOfVolFraction='mass', plot=True)
-                ref.calculate_surfaceRelaxivity('T2', evaluation, lang, calculationOfVolFraction='Mxy', plot=True)
+                #ref.calculate_surfaceRelaxivity('T2', evaluation, lang, calculationOfVolFraction='Mxy', plot=True)
             
             ref.setMeasurementFileNames(filespathT1, filespathT2)
-            ref.createRelaxivityFile(evaluation)    
+            #ref.createRelaxivityFile(evaluation) 
+            ref.createRelaxivityFile(evaluation) 
             
         # Plot calibration for thickener in dispersant    
         else:
