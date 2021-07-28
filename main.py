@@ -5,11 +5,13 @@ from PyQt5 import QtWidgets
 from PyQt5 import QtCore, QtGui
 
 from easygui import fileopenbox
+from easygui import diropenbox
 import platform
 import xml.etree.ElementTree as ET
 import functools
 import json
 from openpyxl import load_workbook
+import os
 
 from MainWindow import Ui_MainWindow_NMR
 from GUI_Toolbox import TableModelData
@@ -752,11 +754,17 @@ class GUI_MainWindow:
 
     #ADD REMOVE FILES LOGIC
     def addFiles_Spinsolve(self):
-        textForOpeningFiles = "Please select Files for Concentration"
-        files = fileopenbox(textForOpeningFiles, "Dunno", default = "", filetypes= "*.txt", multiple=True)
-        if files:
-            #print(files)
-            self.groupFiles_Spinsolve(files)
+        textForOpeningFiles = "Please select Folder for Concentration"
+        #files = fileopenbox(textForOpeningFiles, "Dunno", default = "", filetypes= "*.txt", multiple=True)
+        dir = diropenbox(textForOpeningFiles, "Dunno", default = "../Spinsolve")
+
+        if dir:
+            #print(dir)
+            for (path,dirs,files) in os.walk(dir):
+                print(path,'Path')
+                print(dirs,'Dir')
+                print(files,'Files')
+            #self.groupFiles_Spinsolve(files)
         else:
             #print("exit")
             pass
