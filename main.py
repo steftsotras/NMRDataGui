@@ -812,7 +812,7 @@ class GUI_MainWindow:
             #data.append([])
 
             pos = int(model.data( model.index(row, 5)))
-            print(pos)
+            #print(pos)
             if pos < 1 or pos > model.rowCount():
                 msgBox = QtWidgets.QMessageBox()
                 msgBox.setIcon(QtWidgets.QMessageBox.Warning)

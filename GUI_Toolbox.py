@@ -63,8 +63,6 @@ class TableModelData():
 
     def AddRows(self, num, group1, group2, sheet_name):
         
-        print(group1)
-        
         i=0
         
         for row in range(self.model.rowCount(), self.model.rowCount() + num):
@@ -90,11 +88,11 @@ class TableModelData():
             self.model.setItem(row, 2, item) 
 
             sample_name = group1[i][1]
-            print(sample_name)
+            #print(sample_name)
             #match = re.match('#([0-9]\.*)*', sample_name)
             match = re.search('(#[0-9]+\.*)', sample_name)
 
-            print(match)
+            #print(match)
 
             if match is not None:
                 remark = match[0]
