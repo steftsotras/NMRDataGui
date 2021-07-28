@@ -20,6 +20,7 @@ from GUI_Toolbox import NMRData
 from Driver_referenceMeasurement_createFile_importExcel import Driver_referenceMeasurement_createFile_importExcel
 from Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel import Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel
 from Driver_comparisonPlots import Driver_comparisonPlots
+from Driver_referenceMeasurement_createFile_withoutExcel import Driver_referenceMeasurement_createFile_withoutExcel
 
 import pandas as pd
 
@@ -686,70 +687,6 @@ class GUI_MainWindow:
         selectedRowsDEL = [int(i) for i in selectedRowsDEL]
 
         self.tableModel_Spinsolve.DelRows(selectedRowsDEL)
-        
-    #Grouping Files to cook them up for the script
-    def groupFiles_Spinsolve(self, files):
-
-        fileInfo = list()
-        #groupedfiles = []
-        
-        for f in files:
-            results = self.nmrDataTools.getNMRinfo(f)
-            results.append(f)
-            fileInfo.append(results)
-
-        #print(fileInfo)
-        #Update UI
-        groupedT1 = list()
-        groupedT2 = list()
-
-        #create groupedfiles for script input
-        fileInfo.sort(key=lambda x: x[1])
-        groupedBySampleName = functools.reduce(lambda l, x: (l.append([x]) if l[-1][0][1] != x[1] else l[-1].append(x)) or l, fileInfo[1:], [[fileInfo[0]]]) if fileInfo else []
-        
-        numberOfConcentrations = 0
-
-        
-
-        for groupRow in groupedBySampleName:
-
-            numberOfConcentrations += 1
-            #print("GROUP")    
-            #print(groupRow)
-
-            if len(groupRow) != 6:
-                msgBox = QtWidgets.QMessageBox()
-                msgBox.setIcon(QtWidgets.QMessageBox.Warning)
-                msgBox.setText("Wrong Input!!")
-                msgBox.setWindowTitle("Eisai malakas")
-                msgBox.setStandardButtons(QtWidgets.QMessageBox.Ok)
-                returnValue = msgBox.exec()
-                return 0
-            
-
-            for groupT in groupRow:
-
-                if str(groupT[0]) == "T2A":
-                    groupedT2.append(groupT)
-                elif str(groupT[0]) == "T1":
-                    groupedT1.append(groupT)
-                else:
-                    return 0
-        
-        #print(groupedT1)
-        #print(groupedT2)
-
-        #self.CreateTable(self.numberOfConcentrations, self.groupedT1, self.groupedT2)
-
-        sheetname = self.comboWeights_Spinsolve.currentText()
-
-        model = self.tableModel_Spinsolve.AddRows(numberOfConcentrations, groupedT1, groupedT2, sheetname)
-        
-        table = self.ui.tableView_mesurementFiles_Spinsolve
-        table.setModel(model)
-        table.horizontalHeader().resizeSection(0, 330)
-        table.resizeColumnsToContents()    
-
 
 
     #ADD REMOVE FILES LOGIC
@@ -861,6 +798,10 @@ class GUI_MainWindow:
         files_T2 = [[0 for x in range(3)] for y in range(model.rowCount())]
         filespath_T1 = [[0 for x in range(3)] for y in range(model.rowCount())]
         filespath_T2 = [[0 for x in range(3)] for y in range(model.rowCount())]
+
+        value_T1 = [[0 for x in range(3)] for y in range(model.rowCount())]
+        value_T2 = [[0 for x in range(3)] for y in range(model.rowCount())]
+
         
         liquidmassfromTable = list()
         particlemassfromTable = list()
@@ -888,6 +829,10 @@ class GUI_MainWindow:
                 files_T2[pos-1][i] = groupedT2[group_row][2]
                 filespath_T1[pos-1][i] = groupedT1[group_row][4]
                 filespath_T2[pos-1][i] = groupedT2[group_row][4]
+
+                value_T1[pos-1][i] = groupedT1[group_row][3]
+                value_T2[pos-1][i] = groupedT2[group_row][3]
+
                 group_row += 1
 
             for column in range(model.columnCount()):
@@ -903,11 +848,13 @@ class GUI_MainWindow:
 
         allFiles = files_T1 + files_T2
 
-        #print(liquidmassfromTable)
-        #print(particlemassfromTable)
-        print(allFiles)
-        print(filespath_T1)
-        print(filespath_T2)
+        # print(liquidmassfromTable)
+        # print(particlemassfromTable)
+        # print(allFiles)
+        # print(filespath_T1)
+        # print(filespath_T2)
+        # print(value_T1)
+        # print(value_T2)
         #print(data)
         
         if evaluation_single_Spinsolve.isChecked() == True and evaluation_double_Spinsolve.isChecked() == False:
@@ -929,12 +876,12 @@ class GUI_MainWindow:
             language = "german"
         else:
             language = "english"
-            driver = Driver_referenceMeasurement_createFile_importExcel()
-            driver.runDriver(materialName_Spinsolve.currentText(), evaluation, bulkName_Spinsolve.currentText(), user_Spinsolve.toPlainText(), language, remarks_Spinsolve.toPlainText(), temperature_Spinsolve.toPlainText(), float(surfaceArea_Argon_Spinsolve.toPlainText()), float(densityBulk_Spinsolve.toPlainText()), float(particleDensity_Spinsolve.toPlainText()), dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable, particlemassfromTable )
+            driver = Driver_referenceMeasurement_createFile_withoutExcel()
+            driver.runDriver(materialName_Spinsolve.currentText(), evaluation, bulkName_Spinsolve.currentText(), user_Spinsolve.toPlainText(), language, remarks_Spinsolve.toPlainText(), temperature_Spinsolve.toPlainText(), float(surfaceArea_Argon_Spinsolve.toPlainText()), float(densityBulk_Spinsolve.toPlainText()), float(particleDensity_Spinsolve.toPlainText()), dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, value_T1, value_T2, filespath_T1, filespath_T2, liquidmassfromTable, particlemassfromTable )
             language = "german"
 
-        driver = Driver_referenceMeasurement_createFile_importExcel()
-        driver.runDriver(materialName_Spinsolve.currentText(), evaluation, bulkName_Spinsolve.currentText(), user_Spinsolve.toPlainText(), language, remarks_Spinsolve.toPlainText(), temperature_Spinsolve.toPlainText(), float(surfaceArea_Argon_Spinsolve.toPlainText()), float(densityBulk_Spinsolve.toPlainText()), float(particleDensity_Spinsolve.toPlainText()), dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable, particlemassfromTable )
+        driver = Driver_referenceMeasurement_createFile_withoutExcel()
+        driver.runDriver(materialName_Spinsolve.currentText(), evaluation, bulkName_Spinsolve.currentText(), user_Spinsolve.toPlainText(), language, remarks_Spinsolve.toPlainText(), temperature_Spinsolve.toPlainText(), float(surfaceArea_Argon_Spinsolve.toPlainText()), float(densityBulk_Spinsolve.toPlainText()), float(particleDensity_Spinsolve.toPlainText()), dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, value_T1, value_T2, filespath_T1, filespath_T2, liquidmassfromTable, particlemassfromTable )
         
 
 

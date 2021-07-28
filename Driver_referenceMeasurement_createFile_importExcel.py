@@ -101,6 +101,9 @@ class Driver_referenceMeasurement_createFile_importExcel:
         porousMaterial=0
         surfaceRelaxivity_T2_Mxy =[]
 
+        # print(Mz,'Mz')
+        # print(Mxy,'Mxy')
+
         # Initial magnetization
         # Mz = [[103,105,101],[98,100,97],[92,94,92],[86,83,85]]
         # Mxy = [[288,286,282],[275,274,270],[258,255,258],[227,227,227],[209,206,205]]
