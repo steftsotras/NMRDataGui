@@ -277,6 +277,9 @@
          <property name="text">
           <string>English</string>
          </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
       </layout>
@@ -2154,6 +2157,9 @@
          <property name="text">
           <string>English</string>
          </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
         </widget>
        </item>
       </layout>
@@ -3461,6 +3467,9 @@
         <widget class="QCheckBox" name="checkBox_surfaceAreaCalculation_language_english">
          <property name="text">
           <string>English</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
