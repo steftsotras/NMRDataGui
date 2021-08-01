@@ -135,7 +135,7 @@ class TableModelData():
 
     def updateWeights(self, sheetname, row):
         
-        item0 = self.model.item(row,0)
+        item0 = self.model.item(row,1)
         item0Text = str(item0.text())   
 
         sample_name = item0Text
@@ -148,10 +148,21 @@ class TableModelData():
 
         data = self.NMRWeightData(remark, sheetname)
         if data != [1,0]:
-            item3 = self.model.item(row,3)
-            item4 = self.model.item(row,4)
+            item3 = self.model.item(row,4)
+            item4 = self.model.item(row,5)
+            item5 = self.model.item(row,6)
+
+            liq_mass = data[0]
+            par_mass = data[1]
+
             item3.setText(str(data[0])[0:6])
             item4.setText(str(data[1])[0:6])
+
+            vf = par_mass / (liq_mass + par_mass)
+            item5.setText(str(vf)[0:6])
+        else:
+            item5 = self.model.item(row,6)
+            item5.setText(str(0))
 
     def updateAllWeights(self, sheetname):
         for row in range(0, self.model.rowCount()):
