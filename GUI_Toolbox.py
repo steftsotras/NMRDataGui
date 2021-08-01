@@ -23,7 +23,7 @@ class TableModelData():
 
     def __init__(self):
         self.model = QtGui.QStandardItemModel(0,6)
-        self.model.setHorizontalHeaderLabels(('Sample Name','T1 Value','T2 Value','Liquid Mass','Particle Mass', 'Position'))
+        self.model.setHorizontalHeaderLabels(('Position','Sample Name','T1 Value','T2 Value','Liquid Mass','Particle Mass','Volume Fraction'))
         
         self.numberOfConcentrations = 0
         self.groupedT1 = list()
@@ -80,12 +80,12 @@ class TableModelData():
             
             #Data from excel
             item = QtGui.QStandardItem(group1[i][1])
-            self.model.setItem(row, 0, item)
+            self.model.setItem(row, 1, item)
             #item = QtGui.QStandardItem("{0:.2f}, {0:.2f}, {0:.2f}".format( group1[i][3], group1[i+1][3], group1[i+2][3] ) )
             item = QtGui.QStandardItem('%.2f - %.2f - %.2f' % (group1[i][3], group1[i+1][3], group1[i+2][3]) ) 
-            self.model.setItem(row, 1, item)
+            self.model.setItem(row, 2, item)
             item = QtGui.QStandardItem('%.2f -  %.2f - %.2f' % (group2[i][3], group2[i+1][3], group2[i+2][3]) )
-            self.model.setItem(row, 2, item) 
+            self.model.setItem(row, 3, item) 
 
             sample_name = group1[i][1]
             #print(sample_name)
@@ -101,16 +101,23 @@ class TableModelData():
 
             data = self.NMRWeightData(remark, sheet_name)
             #print(data)
+            liq_mass = data[0]
+            par_mass = data[1]
 
-            item = QtGui.QStandardItem(str(data[0])[0:6])
-            self.model.setItem(row, 3, item)
-            item = QtGui.QStandardItem(str(data[1])[0:6])
+            item = QtGui.QStandardItem(str(liq_mass)[0:6])
             self.model.setItem(row, 4, item)
+            item = QtGui.QStandardItem(str(par_mass)[0:6])
+            self.model.setItem(row, 5, item)
             i+=3
             
             #Position
             item = QtGui.QStandardItem(str(row+1))
-            self.model.setItem(row, 5, item)
+            self.model.setItem(row, 0, item)
+
+            #Volume Fraction
+            vf = par_mass / (liq_mass + par_mass)
+            item = QtGui.QStandardItem(str(vf)[0:6])
+            self.model.setItem(row, 6, item)
 
         return self.model
     

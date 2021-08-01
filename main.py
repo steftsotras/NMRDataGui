@@ -423,7 +423,7 @@ class GUI_MainWindow:
     #ADD REMOVE FILES LOGIC
     def addFiles(self):
         textForOpeningFiles = "Please select Files for Concentration"
-        files = fileopenbox(textForOpeningFiles, "Dunno", default = "", filetypes= "*.txt", multiple=True)
+        files = fileopenbox(textForOpeningFiles, "Dunno", default = "m:/AcornArea/", filetypes= "*.txt", multiple=True)
         if files:
             #print(files)
             self.groupFiles(files)
@@ -483,7 +483,7 @@ class GUI_MainWindow:
         for row in range(model.rowCount()):
             #data.append([])
 
-            pos = int(model.data( model.index(row, 5)))
+            pos = int(model.data( model.index(row, 0)))
             print(pos)
             if pos < 1 or pos > model.rowCount():
                 msgBox = QtWidgets.QMessageBox()
@@ -510,8 +510,8 @@ class GUI_MainWindow:
                 data[pos-1][column] = str(model.data(index)) 
 
         for j in range(model.rowCount()) :
-            liquidmassfromTable.append(float(data[j][3]))
-            particlemassfromTable.append(float(data[j][4]))
+            liquidmassfromTable.append(float(data[j][4]))
+            particlemassfromTable.append(float(data[j][5]))
 
 
         allFiles = files_T1 + files_T2
@@ -811,7 +811,7 @@ class GUI_MainWindow:
         for row in range(model.rowCount()):
             #data.append([])
 
-            pos = int(model.data( model.index(row, 5)))
+            pos = int(model.data( model.index(row, 0)))
             #print(pos)
             if pos < 1 or pos > model.rowCount():
                 msgBox = QtWidgets.QMessageBox()
@@ -842,8 +842,8 @@ class GUI_MainWindow:
                 data[pos-1][column] = str(model.data(index)) 
 
         for j in range(model.rowCount()) :
-            liquidmassfromTable.append(float(data[j][3]))
-            particlemassfromTable.append(float(data[j][4]))
+            liquidmassfromTable.append(float(data[j][4]))
+            particlemassfromTable.append(float(data[j][5]))
 
 
         allFiles = files_T1 + files_T2
@@ -939,7 +939,7 @@ class GUI_MainWindow:
     def addFiles_comperisonPlots(self):
 
         textForOpeningFiles = "Please select Files for Comparison"
-        files = fileopenbox(textForOpeningFiles, "Dunno", default = "", filetypes= "*.txt", multiple=True)
+        files = fileopenbox(textForOpeningFiles, "Dunno", default = "../surfaceRelaxivity/", filetypes= "*.txt", multiple=True)
         if files:
             filepaths = []
             for file in files:
@@ -1138,7 +1138,7 @@ class GUI_MainWindow:
 
     def addReferenceMeasrementFiles(self):
         textForOpeningFiles = "Please select Files for Concentration"
-        files = fileopenbox(textForOpeningFiles, "Dunno", default = "", filetypes= "*.txt", multiple=True)
+        files = fileopenbox(textForOpeningFiles, "Dunno", default = "../surfaceRelaxivity/", filetypes= "*.txt", multiple=True)
         if files:
             #print(files)
 
@@ -1279,7 +1279,7 @@ class GUI_MainWindow:
     #ADD REMOVE FILES LOGIC
     def addFiles_surfaceAreaCalculation(self):
         textForOpeningFiles = "Please select Files for Concentration"
-        files = fileopenbox(textForOpeningFiles, "Dunno", default = "", filetypes= "*.txt", multiple=True)
+        files = fileopenbox(textForOpeningFiles, "Dunno", default = "m:/AcornArea/", filetypes= "*.txt", multiple=True)
         if files:
             #print(files)
             self.groupFiles_surfaceAreaCalculation(files)
@@ -1336,7 +1336,7 @@ class GUI_MainWindow:
         for row in range(model.rowCount()):
             #data.append([])
 
-            pos = int(model.data( model.index(row, 5)))
+            pos = int(model.data( model.index(row, 0)))
             #print(pos)
             if pos < 1 or pos > numOfConcentrations:
                 msgBox = QtWidgets.QMessageBox()
@@ -1362,8 +1362,8 @@ class GUI_MainWindow:
                 data[pos-1][column] = str(model.data(index)) 
 
         for j in range(numOfConcentrations) :
-            liquidmassfromTable.append(float(data[j][3]))
-            particlemassfromTable.append(float(data[j][4]))
+            liquidmassfromTable.append(float(data[j][4]))
+            particlemassfromTable.append(float(data[j][5]))
 
 
         allFiles = files_T1 + files_T2
