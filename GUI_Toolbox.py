@@ -100,9 +100,15 @@ class TableModelData():
                 remark = ''
 
             data = self.NMRWeightData(remark, sheet_name)
+
+            if data == 0:
+                liq_mass = 1
+                par_mass = 0
+            else:
+                liq_mass = data[0]
+                par_mass = data[1]
             #print(data)
-            liq_mass = data[0]
-            par_mass = data[1]
+            
 
             item = QtGui.QStandardItem(str(liq_mass)[0:6])
             self.model.setItem(row, 4, item)
@@ -131,7 +137,7 @@ class TableModelData():
             if str(data[0][i]) == remark:
                 results = [data[7][i], data[8][i]]
                 return results
-        return [1,0]
+        return 0
 
     def updateWeights(self, sheetname, row):
         
@@ -147,7 +153,7 @@ class TableModelData():
             remark = ''
 
         data = self.NMRWeightData(remark, sheetname)
-        if data != [1,0]:
+        if data != 0:
             item3 = self.model.item(row,4)
             item4 = self.model.item(row,5)
             item5 = self.model.item(row,6)
@@ -160,9 +166,6 @@ class TableModelData():
 
             vf = par_mass / (liq_mass + par_mass)
             item5.setText(str(vf)[0:6])
-        else:
-            item5 = self.model.item(row,6)
-            item5.setText(str(0))
 
     def updateAllWeights(self, sheetname):
         for row in range(0, self.model.rowCount()):
