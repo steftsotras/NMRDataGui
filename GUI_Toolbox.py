@@ -309,13 +309,20 @@ class NMRData:
         return T1
 
     def SpinsolveT2_log(self,file):
-        for i in range(30,0,-1): 
+        
+        valuesFrom0to1 = [x * 0.3 for x in range(0, 5)]
+        valuesFrom1to30 = [x * 0.5 for x in range(3, 80)]
+        valuesFrom0to1.extend(valuesFrom1to30)
+        valuesFrom0to1.reverse()
+
+
+        df = pd.read_csv (file, decimal=',', delimiter=';', header=0)
+        Intensity_list = np.asarray(df['Intensity'].tolist())
+        Frequency_list = np.asarray(df['Frequency(ppm)'].tolist())
+
+
+        for i in valuesFrom0to1: 
             try:
-                df = pd.read_csv (file, decimal=',', delimiter=';', header=0)
-                
-                Intensity_list = np.asarray(df['Intensity'].tolist())
-                Frequency_list = np.asarray(df['Frequency(ppm)'].tolist())
-                
                 Frequency_list_short = Frequency_list[Frequency_list<i]  #evtl bis zur fehlermeldung
                 Intensity_list_short = Intensity_list[Frequency_list<i]
                 
