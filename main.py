@@ -1305,8 +1305,6 @@ class GUI_MainWindow:
         surfaceAreaCalculation_densityBulk = self.ui.plainTextEdit_surfaceAreaCalculation_densityBulk
         OneRelaxationTime = self.ui.checkBox_surfaceAreaCalculation_OneRelaxationTime
         TwoRelaxationTime = self.ui.checkBox_surfaceAreaCalculation_TwoRelaxationTime
-        surfaceAreaCalculation_language_english = self.ui.checkBox_surfaceAreaCalculation_language_english
-        surfaceAreaCalculation_language_german = self.ui.checkBox_surfaceAreaCalculation_language_german
         surfaceAreaCalculation_materialName = self.ui.comboBox_surfaceAreaCalculation_materialName
         surfaceAreaCalculation_particleDensity = self.ui.plainTextEdit_surfaceAreaCalculation_particleDensity
         surfaceAreaCalculation_remarks = self.ui.plainTextEdit_surfaceAreaCalculation_remarks
@@ -1386,18 +1384,10 @@ class GUI_MainWindow:
             returnValue = msgBox.exec()
             return 0
         
-        remarks = surfaceAreaCalculation_remarks.toPlainText().split(',')
+        remarks = surfaceAreaCalculation_remarks.toPlainText().split(';')
         for i in range(1, len(files_T1)):
-            if surfaceAreaCalculation_language_english.isChecked() == True and surfaceAreaCalculation_language_german.isChecked() == False:
-                language = "english"
-            elif surfaceAreaCalculation_language_english.isChecked() == False and surfaceAreaCalculation_language_german.isChecked() == True:
-                language = "german"
-            else:
-                language = "english"
-                driver = Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel()
-                driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, remarks[i-1], surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[i], particlemassfromTable[i], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles, i)
-                language = "german"
-
+            language = "english"
+            
             driver = Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel()
             driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, remarks[i-1], surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[i], particlemassfromTable[i], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles, i)
 
