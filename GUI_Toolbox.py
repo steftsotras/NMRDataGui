@@ -160,9 +160,9 @@ class TableModelData():
 
             vf = par_mass / (liq_mass + par_mass)
             item5.setText(str(vf)[0:6])
-        else:
-            item5 = self.model.item(row,6)
-            item5.setText(str(0))
+        # else:
+        #     item5 = self.model.item(row,6)
+        #     item5.setText(str(0))
 
     def updateAllWeights(self, sheetname):
         for row in range(0, self.model.rowCount()):
@@ -303,6 +303,9 @@ class NMRData:
         # print (df)
         Intensity_list_graph = np.asarray(df[1].tolist())
         Frequency_list_graph = np.asarray(df[0].tolist())
+        
+        Intensity_list_graph_shot = Intensity_list_graph[Frequency_list_graph>0]  
+        Frequency_list_graph_shot = Frequency_list_graph[Frequency_list_graph>0] 
 
         # plt.figure()
         # plt.scatter(Frequency_list_graph,Intensity_list_graph)
@@ -317,7 +320,7 @@ class NMRData:
 
         anonymous_fun = lambda x, y_0, R_0, A: fit_func(x, y_0, A, R_0) 
 
-        popt, pcov = curve_fit(anonymous_fun, xdata = Frequency_list_graph, ydata = Intensity_list_graph)
+        popt, pcov = curve_fit(anonymous_fun, xdata = Frequency_list_graph_shot, ydata = Intensity_list_graph_shot)
 
         R_0_fit = popt[1]
         T1_long = (1/R_0_fit)*1000 #ms

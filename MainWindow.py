@@ -1223,7 +1223,7 @@ class Ui_MainWindow_NMR(object):
         self.tableView_surfaceAreaCalculation_mesurementFiles.setWordWrap(True)
         self.tableView_surfaceAreaCalculation_mesurementFiles.setObjectName("tableView_surfaceAreaCalculation_mesurementFiles")
         self.pushButton_surfaceAreaCalculation_AddMesurementFiles = QtWidgets.QPushButton(self.tab_surfaceAreaCalculation)
-        self.pushButton_surfaceAreaCalculation_AddMesurementFiles.setGeometry(QtCore.QRect(20, 504, 190, 30))
+        self.pushButton_surfaceAreaCalculation_AddMesurementFiles.setGeometry(QtCore.QRect(20, 504, 91, 30))
         self.pushButton_surfaceAreaCalculation_AddMesurementFiles.setObjectName("pushButton_surfaceAreaCalculation_AddMesurementFiles")
         self.pushButton_surfaceAreaCalculation_RemoveAllMesurementFiles = QtWidgets.QPushButton(self.tab_surfaceAreaCalculation)
         self.pushButton_surfaceAreaCalculation_RemoveAllMesurementFiles.setGeometry(QtCore.QRect(20, 540, 190, 30))
@@ -1279,6 +1279,9 @@ class Ui_MainWindow_NMR(object):
         self.pushButton_surfaceAreaCalculation_SetUpdateWeights = QtWidgets.QPushButton(self.tab_surfaceAreaCalculation)
         self.pushButton_surfaceAreaCalculation_SetUpdateWeights.setGeometry(QtCore.QRect(460, 540, 190, 30))
         self.pushButton_surfaceAreaCalculation_SetUpdateWeights.setObjectName("pushButton_surfaceAreaCalculation_SetUpdateWeights")
+        self.pushButton_surfaceAreaCalculation_AddMesurementFolder = QtWidgets.QPushButton(self.tab_surfaceAreaCalculation)
+        self.pushButton_surfaceAreaCalculation_AddMesurementFolder.setGeometry(QtCore.QRect(120, 504, 91, 30))
+        self.pushButton_surfaceAreaCalculation_AddMesurementFolder.setObjectName("pushButton_surfaceAreaCalculation_AddMesurementFolder")
         self.tabWinget.addTab(self.tab_surfaceAreaCalculation, "")
         MainWindow_NMR.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow_NMR)
@@ -1302,7 +1305,7 @@ class Ui_MainWindow_NMR(object):
         self.menubar.addAction(self.menuExit.menuAction())
 
         self.retranslateUi(MainWindow_NMR)
-        self.tabWinget.setCurrentIndex(0)
+        self.tabWinget.setCurrentIndex(3)
         QtCore.QMetaObject.connectSlotsByName(MainWindow_NMR)
 
     def retranslateUi(self, MainWindow_NMR):
@@ -1438,6 +1441,7 @@ class Ui_MainWindow_NMR(object):
         self.pushButton_surfaceAreaCalculation_SetUpdateSelectedWeights.setText(_translate("MainWindow_NMR", "Update seleceted weights"))
         self.plainTextEdit_surfaceAreaCalculation_SetUpdateWeights.setPlaceholderText(_translate("MainWindow_NMR", "Update: e.g: 2,5,8"))
         self.pushButton_surfaceAreaCalculation_SetUpdateWeights.setText(_translate("MainWindow_NMR", "Set / Update all weights"))
+        self.pushButton_surfaceAreaCalculation_AddMesurementFolder.setText(_translate("MainWindow_NMR", "Add Folder"))
         self.tabWinget.setTabText(self.tabWinget.indexOf(self.tab_surfaceAreaCalculation), _translate("MainWindow_NMR", "Surface Area Calculation"))
         self.menuMain.setTitle(_translate("MainWindow_NMR", "File"))
         self.menuExit.setTitle(_translate("MainWindow_NMR", "Exit"))
