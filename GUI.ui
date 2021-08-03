@@ -61,7 +61,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Test&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="Tab_referenceMesurement">
      <attribute name="title">
@@ -3605,7 +3605,7 @@
        <rect>
         <x>20</x>
         <y>504</y>
-        <width>190</width>
+        <width>91</width>
         <height>30</height>
        </rect>
       </property>
@@ -3794,6 +3794,19 @@
       </property>
       <property name="text">
        <string>Set / Update all weights</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButton_surfaceAreaCalculation_AddMesurementFolder">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>504</y>
+        <width>91</width>
+        <height>30</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Add Folder</string>
       </property>
      </widget>
     </widget>

@@ -10,29 +10,37 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import optimize
 from scipy.optimize import curve_fit
+import warnings
+warnings.filterwarnings("ignore")
+      
+valuesFrom0to1 = [x * 0.3 for x in range(0, 5)]
+valuesFrom1to30 = [x * 0.5 for x in range(3, 80)]
+valuesFrom0to1.extend(valuesFrom1to30)
+valuesFrom0to1.reverse()
 
 
-for i in range(30,0,-1): 
+df = pd.read_csv (r'M:\AcornArea\Alexander Michalowski\Spinsolve\20210622-#192-silica500I\20210623-093316-T2 Bulk\spectrum_processed.csv', decimal=',', delimiter=';', header=0)
+Intensity_list = np.asarray(df['Intensity'].tolist())
+Frequency_list = np.asarray(df['Frequency(ppm)'].tolist())
+
+
+for i in valuesFrom0to1: 
     try:
-        df = pd.read_csv (r'S:\Alexander Michalowski\Spinsolve\20210622-#192-silica500I\20210622-163724-T2 Bulk\spectrum_processed.csv', decimal=',', delimiter=';', header=0)
         
-        Intensity_list = np.asarray(df['Intensity'].tolist())
-        Frequency_list = np.asarray(df['Frequency(ppm)'].tolist())
+        plt.figure()
+        plt.scatter(Frequency_list,Intensity_list)
+        plt.xlabel('Time / s')
+        plt.ylabel('Intensity')
+        #plt.savefig('20210607-095459-T2 Bulk-Wasser_raw-data.png')
+        plt.show()
         
-        # plt.figure()
-        # plt.scatter(Frequency_list,Intensity_list)
-        # plt.xlabel('Time / s')
-        # plt.ylabel('Intensity')
-        # #plt.savefig('20210607-095459-T2 Bulk-Wasser_raw-data.png')
-        # plt.show()
-        
-        # Intensity_list_log = np.log(Intensity_list)
-        # plt.figure()
-        # plt.scatter(Frequency_list,Intensity_list_log)
-        # plt.xlabel('Time / s')
-        # plt.ylabel('ln(Intensity)')
+        Intensity_list_log = np.log(Intensity_list)
+        plt.figure()
+        plt.scatter(Frequency_list,Intensity_list_log)
+        plt.xlabel('Time / s')
+        plt.ylabel('ln(Intensity)')
         # plt.savefig('20210607-095459-T2 Bulk-Wasser_log-raw-data.png')
-        # plt.show()
+        plt.show()
         
         Frequency_list_short = Frequency_list[Frequency_list<i]  #evtl bis zur fehlermeldung
         Intensity_list_short = Intensity_list[Frequency_list<i]

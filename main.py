@@ -21,6 +21,7 @@ from Driver_referenceMeasurement_createFile_importExcel import Driver_referenceM
 from Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel import Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel
 from Driver_comparisonPlots import Driver_comparisonPlots
 from Driver_referenceMeasurement_createFile_withoutExcel import Driver_referenceMeasurement_createFile_withoutExcel
+from Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_withoutExcel import Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_withoutExcel
 
 import pandas as pd
 
@@ -740,8 +741,8 @@ class GUI_MainWindow:
                     j += 1
 
             
-            #print(T1_files,'T1')
-            #print(T2_files,'T2')
+            print(T1_files,'T1')
+            print(T2_files,'T2')
 
             sheetname = self.comboWeights_Spinsolve.currentText()
 
@@ -1134,6 +1135,10 @@ class GUI_MainWindow:
         self.updateSelWeights_btn_surfaceAreaCalculation = self.ui.pushButton_surfaceAreaCalculation_SetUpdateSelectedWeights
         self.updateSelWeights_btn_surfaceAreaCalculation.clicked.connect(self.updateSelWeights_surfaceAreaCalculation)
 
+        self.addFolder_btn_surfaceAreaCalculation = self.ui.pushButton_surfaceAreaCalculation_AddMesurementFolder
+        self.addFolder_btn_surfaceAreaCalculation.clicked.connect(self.addFolders_surfaceAreaCalculation)
+
+        self.folderAdded = False
         
 
     def addReferenceMeasrementFiles(self):
@@ -1292,8 +1297,75 @@ class GUI_MainWindow:
         
     def removeFiles_surfaceAreaCalculation(self):
         self.tableModel_surfaceAreaCalculation.RemoveAllRows()
+        self.folderAdded = False
 
+    #ADD REMOVE FILES LOGIC
+    def addFolders_surfaceAreaCalculation(self):
 
+        self.folderAdded = True
+
+        T1_fileName = 'data_graph.csv'
+        T2_fileName = 'spectrum_processed.csv'
+
+        T1_files = list()
+        T2_files = list()
+
+        textForOpeningFiles = "Please select Folder for Concentration"
+        #files = fileopenbox(textForOpeningFiles, "Dunno", default = "", filetypes= "*.txt", multiple=True)
+        dir = diropenbox(textForOpeningFiles, "Dunno", default = "../Spinsolve")
+
+        if dir:
+            i = 0 
+            j = 0
+            for (path,dirs,files) in os.walk(dir):
+                
+                # print(path,'Path')
+                # print(dirs,'Dir')
+                # print(files,'Files')
+                
+                if T1_fileName in files:
+
+                    T1_files.append([])
+
+                    T1_files[i].append('T1')
+                    T1_files[i].append(dir.split('\\')[-1])
+                    T1_files[i].append(path.split('\\')[-1])
+
+                    filepath = path+'\\'+T1_fileName
+                    T1_files[i].append(self.nmrDataTools.SpinsolveT1_graphdata(filepath))
+                    T1_files[i].append(filepath)
+
+                    i += 1
+
+                elif T2_fileName in files:
+
+                    T2_files.append([])
+
+                    T2_files[j].append('T2')
+                    T2_files[j].append(dir.split('\\')[-1])
+                    T2_files[j].append(path.split('\\')[-1])
+
+                    filepath = path+'\\'+T2_fileName
+                    T2_files[j].append(self.nmrDataTools.SpinsolveT2_log(filepath))
+                    T2_files[j].append(filepath)
+
+                    j += 1
+
+            
+            print(T1_files,'T1')
+            print(T2_files,'T2')
+
+            sheetname = self.comboWeights_surfaceAreaCalculation.currentText()
+
+            model = self.tableModel_surfaceAreaCalculation.AddRows(1, T1_files, T2_files, sheetname)
+
+            table = self.ui.tableView_surfaceAreaCalculation_mesurementFiles
+            table.setModel(model)
+            table.horizontalHeader().resizeSection(0, 330)
+            table.resizeColumnsToContents()    
+        else:
+            #print("exit")
+            pass
 
 
     #RUN BUTTON
@@ -1326,6 +1398,9 @@ class GUI_MainWindow:
         files_T2 = [[0 for x in range(3)] for y in range(numOfConcentrations)]
         filespath_T1 = [[0 for x in range(3)] for y in range(numOfConcentrations)]
         filespath_T2 = [[0 for x in range(3)] for y in range(numOfConcentrations)]
+
+        value_T1 = [[0 for x in range(3)] for y in range(model.rowCount())]
+        value_T2 = [[0 for x in range(3)] for y in range(model.rowCount())]
         
         liquidmassfromTable = list()
         particlemassfromTable = list()
@@ -1352,6 +1427,9 @@ class GUI_MainWindow:
                 files_T2[pos-1][i] = groupedT2[group_row][2]
                 filespath_T1[pos-1][i] = groupedT1[group_row][4]
                 filespath_T2[pos-1][i] = groupedT2[group_row][4]
+
+                
+
                 group_row += 1
 
             for column in range(model.columnCount()):
@@ -1385,11 +1463,21 @@ class GUI_MainWindow:
             return 0
         
         remarks = surfaceAreaCalculation_remarks.toPlainText().split(';')
-        for i in range(1, len(files_T1)):
-            language = "english"
-            
-            driver = Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel()
-            driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, remarks[i-1], surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[i], particlemassfromTable[i], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles, i)
+
+
+        if self.folderAdded:
+            for i in range(1, len(files_T1)):
+                language = "english"
+                
+                driver = Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_withoutExcel()
+                driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, remarks[i-1], surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, value_T1, value_T2, filespath_T1, filespath_T2, liquidmassfromTable[i], particlemassfromTable[i], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles, i)
+
+        else:
+            for i in range(1, len(files_T1)):
+                language = "english"
+                
+                driver = Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_importExcel()
+                driver.runDriver(surfaceAreaCalculation_materialName.currentText(), Relaxation, surfaceAreaCalculation_bulkName.currentText(), surfaceAreaCalculation_user.toPlainText(), language, remarks[i-1], surfaceAreaCalculation_temperature.toPlainText(), float(surfaceAreaCalculation_surfaceArea_Argon.toPlainText()), float(surfaceAreaCalculation_densityBulk.toPlainText()), float(surfaceAreaCalculation_particleDensity.toPlainText()), surfaceAreaCalculation_dateTime.dateTime().toString("yyyyMMdd"), numOfConcentrations, files_T1, files_T2, filespath_T1, filespath_T2, liquidmassfromTable[i], particlemassfromTable[i], self.referenceFilepath, self.materialName_ReferenceMesurementFiles, self.date_ReferenceMesurementFiles, i)
 
 
 
