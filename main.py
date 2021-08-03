@@ -1428,7 +1428,9 @@ class GUI_MainWindow:
                 filespath_T1[pos-1][i] = groupedT1[group_row][4]
                 filespath_T2[pos-1][i] = groupedT2[group_row][4]
 
-                
+                value_T1[pos-1][i] = groupedT1[group_row][3]
+                value_T2[pos-1][i] = groupedT2[group_row][3]
+
 
                 group_row += 1
 
