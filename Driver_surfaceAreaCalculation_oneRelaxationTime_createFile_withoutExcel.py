@@ -89,9 +89,14 @@ class Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_withoutExcel:
         
 
         
-        Mz = [[0 for x in range(3)] for y in range(numofcon)]
-        Mxy = [[0 for x in range(3)] for y in range(numofcon)]
+        Mz = [[0.0 for x in range(3)] for y in range(numofcon)]
+        Mxy = [[0.0 for x in range(3)] for y in range(numofcon)]
         
+
+        Mz_Bulk = [[0.0 for x in range(3)] for y in range(1)]
+        Mxy_Bulk = [[0.0 for x in range(3)] for y in range(1)]
+
+
         # Create object 'mat' of class nonporousMaterial with properties materialName and bulkName
         mat = oneRelaxationTime(materialName,bulkName)
         mat.setUser(user)
@@ -123,8 +128,8 @@ class Driver_surfaceAreaCalculation_oneRelaxationTime_createFile_withoutExcel:
         mat.setRelaxationTimeBulk('T2',T2[0])
         
         # Set initial magnetization bulk
-        mat.setInitialMagnetizationBulk(Mxy,'T2')
-        mat.setInitialMagnetizationBulk(Mz,'T1')
+        mat.setInitialMagnetizationBulk(Mxy_Bulk,'T2')
+        mat.setInitialMagnetizationBulk(Mz_Bulk,'T1')
         
         # Set initial magnetization suspension
         mat.setInitialMagnetization(Mxy,'T2')
